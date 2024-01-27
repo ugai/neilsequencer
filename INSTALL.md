@@ -7,7 +7,7 @@ To install Neil you should enter the commands shown below to the terminal. These
 1. Install dependencies (this may take a while).
 
     ```sh
-    user@machine:~$ sudo apt-get install g++ mercurial scons python-numpy zlib1g-dev libsndfile1-dev libsamplerate0-dev libfftw3-dev libboost-graph-dev libasound2-dev libjack-jackd2-dev ladspa-sdk liblo-dev libflac-dev libmad0-dev xmlto libgtk2.0-dev libgl1-mesa-dev glutg3-dev libgtkgl2.0-dev libgtkglext1-dev 
+    user@machine:~$ sudo apt-get install g++ mercurial scons python3-numpy zlib1g-dev libsndfile1-dev libsamplerate0-dev libfftw3-dev libboost-graph-dev libasound2-dev libjack-jackd2-dev ladspa-sdk liblo-dev libflac-dev libmad0-dev xmlto libgtk2.0-dev libgl1-mesa-dev freeglut3-dev libgtkgl2.0-dev libgtkglext1-dev 
     ```
 
 2. Clone the Neil repository:
