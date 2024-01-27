@@ -11,4 +11,4 @@ am quite keen to hear again.
 
 ## Build/Run
 
-See `INSTALL.md`
+See [INSTALL.md](INSTALL.md)
