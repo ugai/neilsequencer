@@ -131,13 +131,13 @@ def install_recursive(target, path, mask):
 
 def build_path_config(target, source, env):
     outpath = str(target[0])
-    from StringIO import StringIO
-    from ConfigParser import ConfigParser
+    from io import StringIO
+    from configparser import ConfigParser
     s = StringIO()
     cfg = ConfigParser()
     cfg.add_section('Paths')
     remove_prefix = '${DESTDIR}'
-    for key, value in CONFIG_PATHS.iteritems():
+    for key, value in CONFIG_PATHS.items():
         value = env[value]
         if value.startswith(remove_prefix):
             value = value[len(remove_prefix):]
