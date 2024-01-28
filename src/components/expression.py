@@ -1,5 +1,4 @@
-import gtk
-import gobject
+from gi.repository import GObject, Gtk
 import os
 import pickle
 import neil.com as com
@@ -91,24 +90,24 @@ class Expression():
             self.read_expressions()
         except IOError:
             self.expressions = {}
-        self.dialog = gtk.Dialog(
+        self.dialog = Gtk.Dialog(
                 "Expression",
-                buttons=(gtk.STOCK_OK, True, gtk.STOCK_CANCEL, False)
+                buttons=(Gtk.STOCK_OK, True, Gtk.STOCK_CANCEL, False)
                 )
-        hbox = gtk.HBox()
-        self.selector = gtk.ComboBox(gtk.ListStore(str))
-        cell = gtk.CellRendererText()
+        hbox = Gtk.HBox()
+        self.selector = Gtk.ComboBox(Gtk.ListStore(str))
+        cell = Gtk.CellRendererText()
         self.selector.pack_start(cell, True)
         self.selector.add_attribute(cell, 'text', 0)
         self.selector.connect('changed', self.active_expression_changed)
         # Fill in the combobox expression selector with entries
         model = self.selector.get_model()
-        for name, expression in self.expressions.items():
+        for name, expression in list(self.expressions.items()):
             model.append([name])
-        add_button = new_stock_image_button(gtk.STOCK_OPEN, "Add Expression")
-        del_button = new_stock_image_button(gtk.STOCK_REMOVE, "Remove Expression")
-        mov_button = new_stock_image_button(gtk.STOCK_BOLD, "Rename Expression")
-        hlp_button = new_stock_image_button(gtk.STOCK_HELP, "Help")
+        add_button = new_stock_image_button(Gtk.STOCK_OPEN, "Add Expression")
+        del_button = new_stock_image_button(Gtk.STOCK_REMOVE, "Remove Expression")
+        mov_button = new_stock_image_button(Gtk.STOCK_BOLD, "Rename Expression")
+        hlp_button = new_stock_image_button(Gtk.STOCK_HELP, "Help")
         add_button.connect('clicked', self.add_expression)
         del_button.connect('clicked', self.del_expression)
         mov_button.connect('clicked', self.mov_expression)
@@ -121,10 +120,10 @@ class Expression():
         hbox.pack_start(del_button, expand=False)
         hbox.pack_start(mov_button, expand=False)
         hbox.pack_start(hlp_button, expand=False)
-        scrolled_window = gtk.ScrolledWindow()
+        scrolled_window = Gtk.ScrolledWindow()
         lang = SyntaxLoader("python")
         buff = CodeBuffer(lang=lang)
-        self.text = gtk.TextView(buff)
+        self.text = Gtk.TextView(buff)
         scrolled_window.add(self.text)
         scrolled_window.set_size_request(500, 300)
         self.dialog.vbox.pack_start(hbox, expand=False)
@@ -164,7 +163,7 @@ class Expression():
                     'get_param' : get_param,
                     'n' : plugin.get_pattern_length(pattern),
                     }
-                exec expr in new_global
+                exec(expr, new_global)
             except Exception as e:
                 error(self.dialog, "There was a problem with your expression!", details=str(e))
 

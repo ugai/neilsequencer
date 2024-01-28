@@ -22,13 +22,11 @@
 Provides application class and controls used in the neil main window.
 """
 
-import pathconfig
-import gobject
-gobject.threads_init()
+import gi
+gi.require_version("Gtk", "3.0")
 
-import pygtk
-pygtk.require('2.0')
-import gtk
+from gi.repository import GObject, Gtk
+GObject.threads_init()
 
 import sys, os
 
@@ -38,7 +36,7 @@ import neil.errordlg as errordlg
 import neil.com as com
 
 def shutdown():
-  gtk.main_quit()
+  Gtk.main_quit()
 
 def init_neil():
   """
@@ -53,7 +51,7 @@ def run(argv, initfunc = init_neil):
 
   @param argv: command line arguments as passed by sys.argv.
   @type argv: str list
-  @param initfunc: a function to call before gtk.main() is called.
+  @param initfunc: a function to call before Gtk.main() is called.
   @type initfunc: callable()
   """
   contextlog.init()
@@ -68,9 +66,9 @@ def run(argv, initfunc = init_neil):
   initfunc()
   if app_options.profile:
     import cProfile
-    cProfile.runctx('gtk.main()', globals(), locals(), app_options.profile)
+    cProfile.runctx('Gtk.main()', globals(), locals(), app_options.profile)
   else:
-    gtk.main()
+    Gtk.main()
 
 __all__ = [
 'CancelException',

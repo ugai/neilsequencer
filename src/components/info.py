@@ -22,14 +22,13 @@
 Provides an info view which allows to enter text.
 """
 
-import gtk
-import pango
+from gi.repository import Gtk, Pango
 import neil.common as common
 from neil.utils import add_scrollbars
 from neil.common import MARGIN, MARGIN0, MARGIN2, MARGIN3
 import neil.com as com
 
-class InfoPanel(gtk.VBox):
+class InfoPanel(Gtk.VBox):
     """
     Contains the info view.
     """
@@ -50,67 +49,67 @@ class InfoPanel(gtk.VBox):
         )
 
     def __init__(self, *args, **kwds):
-	"""
-	Initializer.
-	"""
-	gtk.VBox.__init__(self, False, MARGIN)
-	self.set_border_width(MARGIN)
-	self.view = InfoView()
-	self.pack_start(add_scrollbars(self.view))
+        """
+        Initializer.
+        """
+        Gtk.VBox.__init__(self, False, MARGIN)
+        self.set_border_width(MARGIN)
+        self.view = InfoView()
+        self.pack_start(add_scrollbars(self.view), expand=False, fill=False, padding=0)
         eventbus = com.get('neil.core.eventbus')
         eventbus.document_loaded += self.update_all
 
     def handle_focus(self):
-	self.view.grab_focus()
+    	self.view.grab_focus()
 
     def reset(self):
-	"""
-	Resets the router view. Used when
-	a new song is being loaded.
-	"""
-	self.view.reset()
+        """
+        Resets the router view. Used when
+        a new song is being loaded.
+        """
+        self.view.reset()
 
     def update_all(self):
-	self.view.update()
+    	self.view.update()
 
-class InfoView(gtk.TextView):
+class InfoView(Gtk.TextView):
     """
     Allows to enter and view text saved with the module.
     """	
 
     def __init__(self):
-	"""
-	Initializer.
-	"""
-	gtk.TextView.__init__(self)
-	self.set_wrap_mode(gtk.WRAP_WORD)
-	self.get_buffer().connect('changed', self.on_edit)
-        self.modify_font(pango.FontDescription('monospace 8'))
+        """
+        Initializer.
+        """
+        Gtk.TextView.__init__(self)
+        self.set_wrap_mode(Gtk.WrapMode.WORD)
+        self.get_buffer().connect('changed', self.on_edit)
+        self.modify_font(Pango.FontDescription('monospace 8'))
 
     def on_edit(self, buffer_):
-	"""
-	Handler for text changes.
+        """
+        Handler for text changes.
 
-	@param event: Event
-	@type event: wx.Event
-	"""
-	player = com.get('neil.core.player')
+        @param event: Event
+        @type event: wx.Event
+        """
+        player = com.get('neil.core.player')
         text = self.get_buffer().get_property('text')
-	player.set_infotext(text)
+        player.set_infotext(text)
 
     def reset(self):
-	"""
-	Resets the view.
-	"""
-	self.get_buffer().set_property('text', '')
+        """
+        Resets the view.
+        """
+        self.get_buffer().set_property('text', '')
 
     def update(self):
-	"""
-	Updates the view.
-	"""
-	player = com.get('neil.core.player')
-	text = player.get_infotext()
-	self.get_buffer().set_property('text', text)
+        """
+        Updates the view.
+        """
+        player = com.get('neil.core.player')
+        text = player.get_infotext()
+        self.get_buffer().set_property('text', text)
 
 
 _all__ = [
@@ -128,6 +127,6 @@ __neil__ = dict(
 
 if __name__ == '__main__':
     import sys
-    from main import run
+    from neil.main import run
     #sys.argv.append(filepath('demosongs/test.bmx'))
     run(sys.argv)

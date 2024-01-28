@@ -24,7 +24,7 @@ Contains the information displayed in the about box.
 
 import sys
 from neil.utils import prepstr
-import gtk
+from gi.repository import Gtk
 
 NAME = "Neil"
 VERSION = "0.9"
@@ -69,19 +69,19 @@ DOCUMENTERS = [
 
 from neil.utils import filepath, imagepath
 
-def about_visit_website(dialog, link, user_data):
-    import webbrowser
-    webbrowser.open_new(link)
+# def about_visit_website(dialog, link, user_data):
+#     import webbrowser
+#     webbrowser.open_new(link)
+#
+# def about_send_email(dialog, link, user_data):
+#     import webbrowser
+#     print(link)
+#     webbrowser.open_new('mailto:'+link)
+#
+# Gtk.about_dialog_set_url_hook(about_visit_website, None)
+# Gtk.about_dialog_set_email_hook(about_send_email, None)
 
-def about_send_email(dialog, link, user_data):
-    import webbrowser
-    print link
-    webbrowser.open_new('mailto:'+link)
-
-gtk.about_dialog_set_url_hook(about_visit_website, None)
-gtk.about_dialog_set_email_hook(about_send_email, None)
-
-class AboutDialog(gtk.AboutDialog):
+class AboutDialog(Gtk.AboutDialog):
     """
     A simple about dialog with a text control and an OK button.
     """
@@ -91,25 +91,25 @@ class AboutDialog(gtk.AboutDialog):
     )
 
     def __init__(self, parent):
-	"""
-	Initialization.
-	"""
-	gtk.AboutDialog.__init__(self)
-	self.set_name(NAME)
-	self.set_version(VERSION)
-	self.set_copyright(COPYRIGHT)
-	self.set_comments(COMMENTS)
-	self.set_license(LICENSE)
-	self.set_wrap_license(True)
-	self.set_website(WEBSITE)
-	self.set_authors(AUTHORS)
-	self.set_artists(ARTISTS)
-	self.set_documenters(DOCUMENTERS)
-	self.set_logo(gtk.gdk.pixbuf_new_from_file(imagepath("alien.png")))
+        """
+        Initialization.
+        """
+        Gtk.AboutDialog.__init__(self)
+        self.set_name(NAME)
+        self.set_version(VERSION)
+        self.set_copyright(COPYRIGHT)
+        self.set_comments(COMMENTS)
+        self.set_license(LICENSE)
+        self.set_wrap_license(True)
+        self.set_website(WEBSITE)
+        self.set_authors(AUTHORS)
+        self.set_artists(ARTISTS)
+        self.set_documenters(DOCUMENTERS)
+        self.set_logo(Gdk.pixbuf_new_from_file(imagepath("alien.png")))
 
     def show(self):
-	self.run()
-	self.destroy()
+        self.run()
+        self.destroy()
 
 __neil__ = dict(
 	classes = [

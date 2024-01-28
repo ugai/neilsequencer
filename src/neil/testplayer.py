@@ -22,11 +22,10 @@
 Provides a test player for testcases.
 """
 
-from gtkimport import gtk
-import gobject
+from gi.repository import GObject, Gtk
 import config
 from config import get_plugin_aliases, get_plugin_blacklist
-import common
+from . import common
 
 _player = None
 
@@ -41,12 +40,12 @@ def player_callback(player, plugin, data):
 		result = handler(player,plugin,data) or result
 	return result
 
-class TestWindow(gtk.Window):
+class TestWindow(Gtk.Window):
 	def __init__(self):
-		gtk.Window.__init__(self)
+		Gtk.Window.__init__(self)
 		self.event_handlers = event_handlers
 		self.resize(640,480)
-		self.connect('destroy', lambda widget: gtk.main_quit())
+		self.connect('destroy', lambda widget: Gtk.main_quit())
 		self.show_all()
 		get_player()
 
@@ -71,7 +70,7 @@ def get_player():
 		'/usr/lib/zzub',
 	]
 	for pluginpath in pluginpaths:
-		player.add_plugin_path(pluginpath + '/')
+		player.add_plugin_path((pluginpath + '/').encode())
 	inputname, outputname, samplerate, buffersize = config.get_config().get_audiodriver_config()
 	player.initialize(samplerate)
 	try:
@@ -87,7 +86,7 @@ def get_player():
 	def handle_events(player):
 		player.handle_events()
 		return True
-	gobject.timeout_add(1000/25, handle_events, player)
+	GObject.timeout_add(1000/25, handle_events, player)
 	return player
 
 if __name__ == '__main__':

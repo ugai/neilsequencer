@@ -46,7 +46,7 @@ def load_library(*names,**kw):
 	import ctypes, os, sys
 	searchpaths = []
 	if os.name in ('posix', 'mac'):
-		if os.environ.has_key('LD_LIBRARY_PATH'):
+		if 'LD_LIBRARY_PATH' in os.environ:
 			searchpaths += os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
 		searchpaths += [
 			'/usr/local/lib64',
@@ -1178,7 +1178,7 @@ class IteratorFunction(zzubIDLObject):
 	def write_py_method(self, parent, f):
 		print('\tdef ' + self.name + '(self):', file=f)
 		self.write_py_docstr(f, 2)
-		print('\t\tfor index in xrange(self.' + self.get_count_func + '()):', file=f)
+		print('\t\tfor index in range(self.' + self.get_count_func + '()):', file=f)
 		print('\t\t\tyield self.' + self.get_item_func + '(index)', file=f)
 			
 		print('\t', file=f)

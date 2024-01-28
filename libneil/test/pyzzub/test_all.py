@@ -77,7 +77,7 @@ for enumname,cfg in _event_types_.iteritems():
 class Test(TestCase):
 	def setUp(self):
 		self.player = Player.create()
-		self.player.add_plugin_path('../../lib/zzub/')
+		self.player.add_plugin_path(b'../../lib/zzub/')
 		self.player.initialize(44100)
 		self.driver = Audiodriver.create(self.player)
 		self.driver.set_buffersize(1024)

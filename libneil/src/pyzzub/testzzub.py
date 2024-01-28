@@ -56,10 +56,10 @@ if __name__ == "__main__":
 		raise SystemExit(1)
 	
 	p = Player.create()
-	p.add_plugin_path("/usr/local/lib64/zzub/")
-	p.add_plugin_path("/usr/local/lib/zzub/")
-	p.add_plugin_path("/usr/lib64/zzub/")
-	p.add_plugin_path("/usr/lib/zzub/")
+	p.add_plugin_path(b"/usr/local/lib64/zzub/")
+	p.add_plugin_path(b"/usr/local/lib/zzub/")
+	p.add_plugin_path(b"/usr/lib64/zzub/")
+	p.add_plugin_path(b"/usr/lib/zzub/")
 
 	print("initializing zzub player...")
 	if p.initialize(44100):

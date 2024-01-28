@@ -172,7 +172,7 @@ bool Oscilloscope::invoke(zzub_event_data_t& data) {
       drawing_box = gtk_drawing_area_new();		
       gtk_widget_set_events(drawing_box, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
       // gtk_widget_set_events(drawing_box, GDK_EXPOSURE_MASK);
-      gtk_signal_connect(GTK_OBJECT(drawing_box), "expose_event", GTK_SIGNAL_FUNC(&expose_handler), gpointer(this));		
+      gtk_signal_connect(GTK_OBJECT(drawing_box), "draw", GTK_SIGNAL_FUNC(&expose_handler), gpointer(this));		
       gtk_signal_connect(GTK_OBJECT(drawing_box), "configure_event", GTK_SIGNAL_FUNC(&resize_handler), gpointer(this));
       gtk_signal_connect(GTK_OBJECT(drawing_box), "button_press_event", GTK_SIGNAL_FUNC(&button_handler), gpointer(this));
       gtk_signal_connect(GTK_OBJECT(drawing_box), "button_release_event", GTK_SIGNAL_FUNC(&button_handler), gpointer(this));

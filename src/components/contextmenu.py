@@ -25,7 +25,7 @@ such as plugins, patterns, and so on. based on the context object currently
 selected, items can choose to append themselves or not.
 """
 
-import gtk
+from gi.repository import Gtk
 import neil.common as common
 from neil.com import com
 import zzub
@@ -71,7 +71,7 @@ class ContextMenu(Menu):
         return Menu.popup(self, parent, event)
 
 
-class PluginContextMenu(gtk.Menu):
+class PluginContextMenu(Gtk.Menu):
     __neil__ = dict(id='neil.core.popupmenu',
                       singleton=True,
                       categories=['contextmenu.handler'])
@@ -254,13 +254,13 @@ class PluginContextMenu(gtk.Menu):
                 return tree
 
         def populate_from_tree(menu, tree):
-            for key, value in tree.iteritems():
+            for key, value in list(tree.items()):
                 if type(value) is not type({}):
-                    icon = gtk.Image()
+                    icon = Gtk.Image()
                     filename = get_icon_name(value)
                     if os.path.isfile(filename):
                         icon.set_from_file(get_icon_name(value))
-                    item = gtk.ImageMenuItem(prepstr(key, fix_underscore=True))
+                    item = Gtk.ImageMenuItem(prepstr(key, fix_underscore=True))
                     item.set_image(icon)
                     item.connect('activate', create_plugin, value, connection)
                     menu.add(item)
@@ -281,7 +281,7 @@ class PluginContextMenu(gtk.Menu):
         item, add_machine_menu = menu.add_submenu("Add machine")
         for pluginloader in player.get_pluginloader_list():
             plugins[pluginloader.get_uri()] = pluginloader
-        for uri, loader in plugins.iteritems():
+        for uri, loader in list(plugins.items()):
             try:
                 path = self.plugin_tree[uri]
                 if connection and (path[0] not in ["Effects", "Analyzers"]):
@@ -310,7 +310,7 @@ class PluginContextMenu(gtk.Menu):
             mi = mp.get_input_connection_plugin(index).get_pluginloader()
             for i in range(mi.get_parameter_count(3)):
                 param = mi.get_parameter(3, i)
-                print param.get_name()
+                print((param.get_name()))
 
     def populate_pluginmenu(self, menu):
         mp = menu.context
@@ -360,7 +360,7 @@ class PluginContextMenu(gtk.Menu):
     def on_machine_help(self, widget, mp):
         name = filenameify(mp.get_pluginloader().get_name())
         if not show_machine_manual(name):
-            info = gtk.MessageDialog(self.get_toplevel(), flags=0, type=gtk.MESSAGE_INFO, buttons=gtk.BUTTONS_OK, message_format="Sorry, there's no help for this plugin yet")
+            info = Gtk.MessageDialog(self.get_toplevel(), flags=0, type=Gtk.MESSAGE_INFO, buttons=Gtk.BUTTONS_OK, message_format="Sorry, there's no help for this plugin yet")
             info.run()
             info.destroy()
 

@@ -1,5 +1,5 @@
 """ This module contains the PyGTKCodeBuffer-class. This class is a 
-    specialisation of the gtk.TextBuffer and enables syntax-highlighting for 
+    specialisation of the Gtk.TextBuffer and enables syntax-highlighting for 
     PyGTK's TextView-widget. 
     
     To use the syntax-highlighting feature you have load a syntax-definition or
@@ -20,9 +20,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import gtk
-import pango
+from gi.repository import GObject, Gtk, Pango
 import re
 import sys
 import os.path
@@ -41,18 +39,18 @@ DEFAULT_STYLES = {
     'comment':      {'foreground': '#0000FF'},
     'preprocessor': {'foreground': '#A020F0'},
     'keyword':      {'foreground': '#A52A2A',
-                     'weight': pango.WEIGHT_BOLD},
+                     'weight': Pango.Weight.BOLD},
     'special':      {'foreground': 'turquoise'},
     'mark1':        {'foreground': '#008B8B'},
     'mark2':        {'foreground': '#6A5ACD'},
     'string':       {'foreground': '#FF00FF'},
     'number':       {'foreground': '#FF00FF'},
     'datatype':     {'foreground': '#2E8B57',
-                     'weight': pango.WEIGHT_BOLD},
+                     'weight': Pango.Weight.BOLD},
     'function':     {'foreground': '#008A8C'},
 
     'link':         {'foreground': '#0000FF',
-                     'underline': pango.UNDERLINE_SINGLE}}
+                     'underline': Pango.Underline.SINGLE}}
 
 
         
@@ -114,11 +112,11 @@ def add_syntax_path(path_or_list):
         for i in range(len(path_or_list)):
             SYNTAX_PATH.insert(0, path_or_list[-i])
     # handle single string
-    elif isinstance(path_or_list, basestring):
+    elif isinstance(path_or_list, str):
         SYNTAX_PATH.insert(0, path_or_list)
     # handle attr-error
     else:
-        raise TypeError, "Argument must be path-string or list of strings"
+        raise TypeError("Argument must be path-string or list of strings")
         
         
         
@@ -154,7 +152,7 @@ class Pattern:
 
         # compile re        
         try: self._regexp = re.compile(regexp, flag)
-        except re.error, e: 
+        except re.error as e: 
             raise Exception("Invalid regexp \"%s\": %s"%(regexp,str(e)))
 
         self._group  = group
@@ -209,7 +207,7 @@ class String:
             string. """
         try:
             self._starts  = re.compile(starts)
-        except re.error, e: 
+        except re.error as e: 
             raise Exception("Invalid regexp \"%s\": %s"%(regexp,str(e)))
         
         if escape:
@@ -220,7 +218,7 @@ class String:
 
         try:     
             self._ends    = re.compile(end_exp)
-        except re.error, e: 
+        except re.error as e: 
             raise Exception("Invalid regexp \"%s\": %s"%(regexp,str(e)))
 
         self.tag_name = style
@@ -295,29 +293,30 @@ class SyntaxLoader(ContentHandler, LanguageDefinition):
         function. """
     
     # some translation-tables for the style-defs:
-    style_weight_table =    {'ultralight': pango.WEIGHT_ULTRALIGHT,
-                             'light': pango.WEIGHT_LIGHT,
-                             'normal': pango.WEIGHT_NORMAL,
-                             'bold':   pango.WEIGHT_BOLD,
-                             'ultrabold': pango.WEIGHT_ULTRABOLD,
-                             'heavy': pango.WEIGHT_HEAVY}
-    style_variant_table =   {'normal': pango.VARIANT_NORMAL,
-                             'smallcaps': pango.VARIANT_SMALL_CAPS}
-    style_underline_table = {'none': pango.UNDERLINE_NONE,
-                             'single': pango.UNDERLINE_SINGLE,
-                             'double': pango.UNDERLINE_DOUBLE}
-    style_style_table =     {'normal': pango.STYLE_NORMAL,
-                             'oblique': pango.STYLE_OBLIQUE,
-                             'italic': pango.STYLE_ITALIC}                                                   
-    style_scale_table =     {
-                            'xx_small': pango.SCALE_XX_SMALL,
-                            'x_small':  pango.SCALE_X_SMALL,
-                            'small':  pango.SCALE_SMALL,
-                            'medium':  pango.SCALE_MEDIUM,
-                            'large':  pango.SCALE_LARGE,
-                            'x_large':  pango.SCALE_X_LARGE,
-                            'xx_large': pango.SCALE_XX_LARGE,
-                            }
+    style_weight_table =    {'ultralight': Pango.Weight.ULTRALIGHT,
+                             'light': Pango.Weight.LIGHT,
+                             'normal': Pango.Weight.NORMAL,
+                             'bold':   Pango.Weight.BOLD,
+                             'ultrabold': Pango.Weight.ULTRABOLD,
+                             'heavy': Pango.Weight.HEAVY}
+    style_variant_table =   {'normal': Pango.Variant.NORMAL,
+                             'smallcaps': Pango.Variant.SMALL_CAPS}
+    style_underline_table = {'none': Pango.Underline.NONE,
+                             'single': Pango.Underline.SINGLE,
+                             'double': Pango.Underline.DOUBLE}
+    style_style_table =     {'normal': Pango.Style.NORMAL,
+                             'oblique': Pango.Style.OBLIQUE,
+                             'italic': Pango.Style.ITALIC}                                                   
+    # style_scale_table =     {
+    #                         'xx_small': Pango.Scale.XX_SMALL,
+    #                         'x_small':  Pango.Scale.X_SMALL,
+    #                         'small':  Pango.Scale.SMALL,
+    #                         'medium':  Pango.Scale.MEDIUM,
+    #                         'large':  Pango.Scale.LARGE,
+    #                         'x_large':  Pango.Scale.X_LARGE,
+    #                         'xx_large': Pango.Scale.XX_LARGE,
+    #                         }
+    style_scale_table = {}
                           
                           
     def __init__(self, lang_name):
@@ -333,7 +332,7 @@ class SyntaxLoader(ContentHandler, LanguageDefinition):
         # search for syntax-files:
         fname = None
         for syntax_dir in SYNTAX_PATH:
-            print syntax_dir
+            print(syntax_dir)
             fname = os.path.join(syntax_dir, "%s.xml"%lang_name)
             if os.path.isfile(fname): break
 
@@ -379,8 +378,8 @@ class SyntaxLoader(ContentHandler, LanguageDefinition):
         self.__group   = 0
         self.__flags   = ''
         self.__style   = attr['style']
-        if 'group' in attr.keys(): self.__group = int(attr['group'])
-        if 'flags' in attr.keys(): self.__flags = attr['flags']
+        if 'group' in list(attr.keys()): self.__group = int(attr['group'])
+        if 'flags' in list(attr.keys()): self.__flags = attr['flags']
         
     def end_pattern(self):
         rule = Pattern(self.__pattern, self.__style, self.__group, self.__flags)
@@ -398,9 +397,9 @@ class SyntaxLoader(ContentHandler, LanguageDefinition):
     def start_keywordlist(self, attr):
         self.__style = "keyword"
         self.__flags = ""
-        if 'style' in attr.keys():
+        if 'style' in list(attr.keys()):
             self.__style = attr['style']
-        if 'flags' in attr.keys():
+        if 'flags' in list(attr.keys()):
             self.__flags = attr['flags']
         self.__keywords = []
         
@@ -428,9 +427,9 @@ class SyntaxLoader(ContentHandler, LanguageDefinition):
     def start_string(self, attr):
         self.__style = "string"
         self.__escape = None
-        if 'escape' in attr.keys():
+        if 'escape' in list(attr.keys()):
             self.__escape = attr['escape']
-        if 'style' in attr.keys():
+        if 'style' in list(attr.keys()):
             self.__style = attr['style']
         self.__start_pattern = ""
         self.__end_pattern = ""
@@ -472,22 +471,22 @@ class SyntaxLoader(ContentHandler, LanguageDefinition):
             pass
             
         elif self.__style_prop_name == 'variant':
-            if not value in self.style_variant_table.keys():
+            if not value in list(self.style_variant_table.keys()):
                 Exception("Unknown style-variant: %s"%value)
             value = self.style_variant_table[value]
                 
         elif self.__style_prop_name == 'underline':
-            if not value in self.style_underline_table.keys():
+            if not value in list(self.style_underline_table.keys()):
                 Exception("Unknown underline-style: %s"%value)
             value = self.style_underline_table[value]
                 
         elif self.__style_prop_name == 'scale':
-            if not value in self.style_scale_table.keys():
+            if not value in list(self.style_scale_table.keys()):
                 Exception("Unknown scale-style: %s"%value)
             value = self.style_scale_table[value]
 
         elif self.__style_prop_name == 'weight':
-            if not value in self.style_weight_table.keys():
+            if not value in list(self.style_weight_table.keys()):
                 Exception("Unknown style-weight: %s"%value)
             value = self.style_weight_table[value]
                 
@@ -505,8 +504,8 @@ class SyntaxLoader(ContentHandler, LanguageDefinition):
             
             
             
-class CodeBuffer(gtk.TextBuffer):
-    """ This class extends the gtk.TextBuffer to support syntax-highlighting. 
+class CodeBuffer(Gtk.TextBuffer):
+    """ This class extends the Gtk.TextBuffer to support syntax-highlighting. 
         You can use this class like a normal TextBuffer. """
         
     def __init__(self, table=None, lang=None, styles={}):
@@ -523,7 +522,7 @@ class CodeBuffer(gtk.TextBuffer):
             styles is a dictionary used to extend or overwrite the default styles
             provided by this module (DEFAULT_STYLE) and any language specific 
             styles defined by the LanguageDefinition. """
-        gtk.TextBuffer.__init__(self, table)
+        Gtk.TextBuffer.__init__(self, table)
 
         # default styles    
         self.styles = DEFAULT_STYLES
@@ -535,7 +534,7 @@ class CodeBuffer(gtk.TextBuffer):
         self.styles.update(styles)
         
         # create tags
-        for name, props in self.styles.items():
+        for name, props in list(self.styles.items()):
             style = dict(self.styles['DEFAULT'])    # take default
             style.update(props)                     # and update with props
             self.create_tag(name, **style)
@@ -666,7 +665,7 @@ class CodeBuffer(gtk.TextBuffer):
         self.styles.update(styles)
         
         table = self.get_tag_table()
-        for name, props in styles.items():
+        for name, props in list(styles.items()):
             style = self.styles['DEFAULT']
             style.update(props)
             # if tagname is unknown:
@@ -676,6 +675,6 @@ class CodeBuffer(gtk.TextBuffer):
             else: # update tag
                 tag = table.lookup(name)
                 _log_debug("Update tag %s with (%s)"%(name, style))
-                map(lambda i: tag.set_property(i[0],i[1]), style.items())
+                list(map(lambda i: tag.set_property(i[0],i[1]), list(style.items())))
 
                         

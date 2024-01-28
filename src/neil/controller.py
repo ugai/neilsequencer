@@ -23,42 +23,42 @@ Contains dialogs related to controller enumeration and pick up.
 """
 
 import sys, os
-import gtk
+from gi.repository import GObject, Gtk
 import zzub
 import webbrowser
 
 import neil.com as com
-from utils import prepstr, buffersize_to_latency, filepath, error, add_scrollbars, new_listview
-import utils
+from .utils import prepstr, buffersize_to_latency, filepath, error, add_scrollbars, new_listview
+from . import utils
 import config
-import common
-from common import MARGIN, MARGIN2, MARGIN3
+from . import common
+from .common import MARGIN, MARGIN2, MARGIN3
 
-class SelectControllerDialog(gtk.Dialog):
+class SelectControllerDialog(Gtk.Dialog):
 	"""
 	Dialog that records a controller from keyboard input.
 	"""
 	def __init__(self, parent=None):
-		gtk.Dialog.__init__(self,
+		Gtk.Dialog.__init__(self,
 			"Add Controller",
 			parent and parent.get_toplevel(),
-			gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+			Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
 			None
 		)
-		vbox = gtk.VBox()
-		lsizer = gtk.VBox(False, MARGIN)
+		vbox = Gtk.VBox()
+		lsizer = Gtk.VBox(False, MARGIN)
 		vbox.set_border_width(MARGIN2)
 		vbox.set_spacing(MARGIN)
-		label = gtk.Label("Move a control on your MIDI device to pick it up.")
+		label = Gtk.Label("Move a control on your MIDI device to pick it up.")
 		label.set_alignment(0, 0.5)
 		lsizer.pack_start(label, expand=False)
-		sg = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+		sg = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
 		def make_row(name):
-			row = gtk.HBox(False, MARGIN)
-			c1 = gtk.Label()
+			row = Gtk.HBox(False, MARGIN)
+			c1 = Gtk.Label()
 			c1.set_markup('<b>%s</b>' % name)
 			c1.set_alignment(1, 0.5)
-			c2 = gtk.Label()
+			c2 = Gtk.Label()
 			c2.set_alignment(0, 0.5)
 			sg.add_widget(c1)
 			row.pack_start(c1, expand=False)
@@ -68,12 +68,12 @@ class SelectControllerDialog(gtk.Dialog):
 		self.controllerlabel = make_row("Controller")
 		self.channellabel = make_row("Channel")
 		self.valuelabel = make_row("Value")
-		self.btnok = self.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK)
-		self.btncancel = self.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+		self.btnok = self.add_button(Gtk.STOCK_OK, Gtk.ResponseType.OK)
+		self.btncancel = self.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
 		vbox.pack_start(lsizer, expand=False)
-		hsizer = gtk.HBox(False, MARGIN)
-		self.namelabel = gtk.Label("Name")
-		self.editname = gtk.Entry()
+		hsizer = Gtk.HBox(False, MARGIN)
+		self.namelabel = Gtk.Label("Name")
+		self.editname = Gtk.Entry()
 		hsizer.pack_start(self.namelabel, expand=False)
 		hsizer.add(self.editname)
 		vbox.pack_end(hsizer)
@@ -112,7 +112,7 @@ class SelectControllerDialog(gtk.Dialog):
 		"""
 		self.update()
 		if self.btnok.get_property('sensitive'):
-			self.response(gtk.RESPONSE_OK)
+			self.response(Gtk.ResponseType.OK)
 		
 	def update(self):
 		"""
@@ -158,16 +158,16 @@ def learn_controller(parent):
 	dlg = SelectControllerDialog(parent)
 	response = dlg.run()
 	dlg.destroy()
-	if response == gtk.RESPONSE_OK:
+	if response == Gtk.ResponseType.OK:
 		channel,ctrlid = dlg._target
 		return dlg._name, channel, ctrlid
 	return None
 
 if __name__ == '__main__':
 	import testplayer, gobject
-	from testplayer import TestWindow
+	from .testplayer import TestWindow
 	window = TestWindow()
 	def show_dialog(rootwindow):
-		print learn_controller(rootwindow, rootwindow)
-	gobject.timeout_add(100, show_dialog, window)
-	gtk.main()
+		print(learn_controller(rootwindow, rootwindow))
+	GObject.timeout_add(100, show_dialog, window)
+	Gtk.main()
