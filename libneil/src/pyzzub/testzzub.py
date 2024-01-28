@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #encoding: latin-1
 
 # pyzzub
@@ -21,7 +21,7 @@
 
 from zzub import Player, zzub_player_state_playing, zzub_player_state_stopped, \
 	Audiodriver
-import os, sys, thread, time
+import os, sys, _thread, time
 
 closethread = False
 threadclosed = False
@@ -42,18 +42,18 @@ def event_thread(player):
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
-		print "syntax: testzzub.py <path to bmx or ccm>"
+		print("syntax: testzzub.py <path to bmx or ccm>")
 		raise SystemExit
 		
 	filepath = sys.argv[1]
 	if not os.path.isfile(filepath):
-		print "no such file: %s" % filepath
-		raise SystemExit, 1
+		print("no such file: %s" % filepath)
+		raise SystemExit(1)
 	
 	ext = os.path.splitext(filepath)[1]
 	if not ext in ('.bmx','.ccm'):
-		print "unknown filetype: %s" % ext
-		raise SystemExit, 1
+		print("unknown filetype: %s" % ext)
+		raise SystemExit(1)
 	
 	p = Player.create()
 	p.add_plugin_path("/usr/local/lib64/zzub/")
@@ -61,20 +61,20 @@ if __name__ == "__main__":
 	p.add_plugin_path("/usr/lib64/zzub/")
 	p.add_plugin_path("/usr/lib/zzub/")
 
-	print "initializing zzub player..."
+	print("initializing zzub player...")
 	if p.initialize(44100):
-		print "error initializing zzub."
-		raise SystemExit, 1
+		print("error initializing zzub.")
+		raise SystemExit(1)
 
 	driver = Audiodriver.create(p)
 	driver.set_buffersize(1024)
 	driver.set_samplerate(44100)
 	res = driver.create_device(-1, -1)
 	if res != 0:
-		print "error creating device."
-		raise SystemExit, 1
+		print("error creating device.")
+		raise SystemExit(1)
 
-	print "Loading %s... " % filepath
+	print("Loading %s... " % filepath)
 	if ext == '.bmx':
 		res = p.load_bmx(filepath)
 	elif ext == '.ccm':
@@ -82,27 +82,27 @@ if __name__ == "__main__":
 	else:
 		res = -1
 	if res:
-		print "Failed loading"
-		raise SystemExit, 1
+		print("Failed loading")
+		raise SystemExit(1)
 
-	print "enabling audiodriver..."
+	print("enabling audiodriver...")
 	driver.enable(True)
 	
 	p.set_state(zzub_player_state_playing)
 
-	print "playing. press a key to quit."
-	thread.start_new_thread(event_thread, (p,))
+	print("playing. press a key to quit.")
+	_thread.start_new_thread(event_thread, (p,))
 	
 	sys.stdin.readline()
 	
 	closethread = True
 	while not threadclosed:
-		print "waiting for thread to stop..."
+		print("waiting for thread to stop...")
 		time.sleep(0.1)
 
-	print "stopping..."
+	print("stopping...")
 	p.set_state(zzub_player_state_stopped)
 
-	print "destroying audiodriver..."
+	print("destroying audiodriver...")
 	driver.destroy()
-	print "finished playing."
+	print("finished playing.")

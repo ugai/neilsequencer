@@ -5,4 +5,10 @@
 config.log
 .sconf_temp
 
+doc/
+
+*.a
+*.so
+*.def
+*.os
 *.bak

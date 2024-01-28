@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os,sys
 
@@ -27,5 +27,5 @@ for filename in os.listdir(basepath):
 		command.append(filename)
 
 cmd = ' '.join(command)
-print cmd
+print(cmd)
 os.system(cmd)

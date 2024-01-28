@@ -143,7 +143,8 @@ def build_path_config(target, source, env):
             value = value[len(remove_prefix):]
         cfg.set('Paths', key, os.path.abspath(str(env.Dir(value))))
     cfg.write(s)
-    file(outpath, 'w').write(s.getvalue())
+    with open(outpath, 'w') as file:
+        file.write(s.getvalue())
 
 builders = dict(
     BuildPathConfig = Builder(action=build_path_config),
