@@ -97,6 +97,7 @@ class SequencerToolBar(Gtk.HBox):
         Initialization.
         """
         super().__init__(False, MARGIN)
+        self.parent = seqview
         self.seqview = seqview
         self.set_border_width(MARGIN)
         self.steplabel = Gtk.Label()
@@ -244,7 +245,7 @@ class SequencerPanel(Gtk.VBox):
         self.splitter.pack1(add_scrollbars(self.seqpatternlist), False, False)
         self.splitter.pack2(scrollwin, True, True)
         self.view = self.seqview
-        self.toolbar = SequencerToolBar(self.seqview)
+        self.toolbar = SequencerToolBar(self)
 
         self.statusbar = Gtk.HBox(False, MARGIN)
         self.statusbar.set_border_width(MARGIN0)
@@ -1344,7 +1345,7 @@ class SequencerView(Gtk.DrawingArea):
         return False
 
     def redraw(self, *args):
-        if self.window and self.window.is_visible():
+        if self.get_window() is not None and self.window.is_visible():
             rect = self.get_allocation()
             self.window.invalidate_rect((0, 0, rect.width, rect.height), False)
 
@@ -1433,12 +1434,12 @@ class SequencerView(Gtk.DrawingArea):
         else:
             self.vscroll.show()
         adj = self.hscroll.get_adjustment()
-        adj.set_all(self.startseqtime / self.step, 0,
+        adj.configure(self.startseqtime / self.step, 0,
                     int(vw + (w - self.seq_left_margin) /
                         float(self.seq_row_size) - 2),
                     1, 1, pw)
         adj = self.vscroll.get_adjustment()
-        adj.set_all(self.starttrack, 0, vh, 1, 1, ph)
+        adj.configure(self.starttrack, 0, vh, 1, 1, ph)
         #self.redraw()
 
     def get_virtual_size(self):

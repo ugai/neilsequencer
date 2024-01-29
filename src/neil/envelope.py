@@ -72,7 +72,7 @@ class SimpleEnvelope(Gtk.DrawingArea):
         return rect.width, rect.height
 
     def redraw(self):
-        if self.window:
+        if self.get_window() is not None:
             w, h = self.get_client_size()
             self.window.invalidate_rect((0, 0, w, h), False)
 
@@ -368,7 +368,7 @@ class EnvelopeView(Gtk.DrawingArea):
         return rect.width, rect.height
 
     def redraw(self):
-        if self.window:
+        if self.get_window() is not None:
             w, h = self.get_client_size()
             self.window.invalidate_rect((0, 0, w, h), False)
 

@@ -161,7 +161,7 @@ class WaveEditView(Gtk.DrawingArea):
             self.sample_changed()
 
     def redraw(self):
-        if self.window:
+        if self.get_window() is not None:
             w, h = self.get_client_size()
             self.window.invalidate_rect((0, 0, w, h), False)
 

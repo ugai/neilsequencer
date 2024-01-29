@@ -63,7 +63,7 @@ class TransportPanel(Gtk.HBox):
         self.master_control_window.connect('delete-event', self.master_control_window.hide_on_delete)
         #self.master_control_window.set_deletable(False)
         self.master_control_window.set_resizable(True)
-        self.master_control_window.set_position(Gtk.WIN_POS_MOUSE)
+        self.master_control_window.set_position(Gtk.WindowPosition.MOUSE)
         eventbus = com.get('neil.core.eventbus')
         eventbus.zzub_parameter_changed += self.on_zzub_parameter_changed
         eventbus.zzub_player_state_changed += self.on_zzub_player_state_changed

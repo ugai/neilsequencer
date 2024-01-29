@@ -78,7 +78,7 @@ class AmpView(Gtk.DrawingArea):
         self.peaks[:self.hold] = [self.amp - std] * self.hold
 
         rect = self.get_allocation()
-        if self.window:
+        if self.get_window() is not None:
             self.window.invalidate_rect((0, 0, rect.width, rect.height), False)
         return True
 
@@ -215,7 +215,7 @@ class MasterPanel(Gtk.VBox):
         vbox.pack_start(hbox, expand=True, fill=True, padding=0)
         vbox.pack_start(self.volumelabel, expand=False, fill=False, padding=0)
 
-        self.pack_start(vbox)
+        self.pack_start(vbox, expand=False, fill=False, padding=0)
 
         self.update_all()
 

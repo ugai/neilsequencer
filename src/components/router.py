@@ -396,7 +396,7 @@ class VolumeSlider(Gtk.Window):
         return False
 
     def redraw(self):
-        if self.window:
+        if self.get_window() is not None:
             rect = self.drawingarea.get_allocation()
             window = self.drawingarea.window
             window.invalidate_rect((0, 0, rect.width, rect.height), False)
@@ -968,7 +968,7 @@ class RouteView(Gtk.DrawingArea):
         # TODO: find some other way to find out whether we are really visible
         #if self.rootwindow.get_current_panel() != self.panel:
         #       return True
-        if self.window:
+        if self.get_window() is not None:
             player = com.get('neil.core.player')
             rect = self.get_allocation()
             w, h = rect.width, rect.height
@@ -988,7 +988,7 @@ class RouteView(Gtk.DrawingArea):
         return False
 
     def redraw(self):
-        if self.window:
+        if self.get_window() is not None:
             self.routebitmap = None
             rect = self.get_allocation()
             self.window.invalidate_rect((0, 0, rect.width, rect.height), False)

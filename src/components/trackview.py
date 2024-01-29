@@ -106,7 +106,7 @@ class View(Gtk.DrawingArea):
         self.redraw()
 
     def redraw(self):
-        if self.window:
+        if self.get_window() is not None:
             rect = self.get_allocation()
             self.window.invalidate_rect((0,0,rect.width,rect.height), False)
 
@@ -382,7 +382,7 @@ class TrackViewPanel(Gtk.VBox):
         self.sizegroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         self.hscroll = Gtk.HScrollbar()
         hadjustment = self.hscroll.get_adjustment()
-        hadjustment.set_all(0, 0, 16384, 1, 1024, 2300)
+        hadjustment.configure(0, 0, 16384, 1, 1024, 2300)
         self.timeline = com.get('neil.core.timelineview', hadjustment)
         self.trackviews = Gtk.VBox()
         

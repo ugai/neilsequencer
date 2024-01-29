@@ -1046,9 +1046,9 @@ class PatternView(Gtk.DrawingArea):
         else:
             self.vscroll.show()
         adj = self.hscroll.get_adjustment()
-        adj.set_all(self.start_col, 0, vw, 1, 1, pw)
+        adj.configure(self.start_col, 0, vw, 1, 1, pw)
         adj = self.vscroll.get_adjustment()
-        adj.set_all(self.start_row, 0, vh, 1, 1, ph)
+        adj.configure(self.start_row, 0, vh, 1, 1, ph)
 
     def set_octave(self, o):
         """
@@ -1156,12 +1156,12 @@ class PatternView(Gtk.DrawingArea):
         return False
 
     def redraw(self, *args):
-        if self.window:
+        if self.get_window() is not None:
             w, h = self.get_client_size()
             self.window.invalidate_rect((0, 0, w, h), False)
 
     def on_active_patterns_changed(self, selpatterns):
-        if self.window:
+        if self.get_window() is not None:
             self.pattern_changed()
 
     def pattern_changed(self, *args):
@@ -2425,7 +2425,7 @@ class PatternView(Gtk.DrawingArea):
                 self.statuslabels[1].set_label("")
 
     def update_all(self):
-        if self.window and self.window.is_visible():
+        if self.get_window() is not None and self.window.is_visible():
             self.prepare_textbuffer()
             self.refresh_view()
 

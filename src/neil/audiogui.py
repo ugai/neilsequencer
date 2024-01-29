@@ -539,7 +539,7 @@ class Knob(Gtk.VBox):
         
     def refresh(self):
         rect = self.get_allocation()
-        if self.window:
+        if self.get_window() is not None:
             self.window.invalidate_rect(rect, False)
         return True
         
@@ -637,7 +637,7 @@ class DecoBox(Gtk.VBox):
         
     def refresh(self):
         rc = self.get_allocation()
-        if self.window:
+        if self.get_window() is not None:
             self.window.invalidate_rect(rc, False)
         return True
         
@@ -843,7 +843,7 @@ class LCD(Gtk.DrawingArea):
 
     def refresh(self):
         rc = self.get_allocation()
-        if self.window:
+        if self.get_window() is not None:
             self.window.invalidate_rect((0,0,rc.width,rc.height), False)
         return True
 

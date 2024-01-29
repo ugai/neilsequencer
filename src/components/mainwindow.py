@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA    02110-1301, USA.
 
+import functools
 import os
 from gi.repository import GObject, Gtk, Gdk
 from neil.utils import format_time, ticks_to_time, prepstr, linear2db, db2linear, filepath, \
@@ -65,7 +66,7 @@ class FramePanel(Gtk.Notebook):
         self.set_show_tabs(True)
         com.get("neil.core.icons") # make sure theme icons are loaded
         defaultpanel = None
-        pages = sorted(com.get_from_category('neil.viewpanel'), cmp=cmp_view)
+        pages = sorted(com.get_from_category('neil.viewpanel'), key=functools.cmp_to_key(cmp_view))
         for index, panel in enumerate(pages):
             if not hasattr(panel, '__view__'):
                 print(("panel",panel,"misses attribute __view__"))
@@ -80,8 +81,8 @@ class FramePanel(Gtk.Notebook):
             header = Gtk.VBox()
             labelwidget = Gtk.Label(label)
             labelwidget.set_angle(90)
-            header.pack_start(labelwidget)
-            header.pack_start(new_theme_image(stockid, Gtk.IconSize.MENU))
+            header.pack_start(labelwidget, expand=False, fill=False, padding=0)
+            header.pack_start(new_theme_image(stockid, Gtk.IconSize.MENU), expand=False, fill=False, padding=0)
             header.show_all()
             if key:
                 header.set_tooltip_text("%s (%s)" % (label, key))
@@ -143,7 +144,7 @@ class ViewMenu(Menu):
 
     def __init__(self):
         Menu.__init__(self)
-        views = sorted(com.get_from_category('view'), cmp=cmp_view)
+        views = sorted(com.get_from_category('view'), key=functools.cmp_to_key(cmp_view))
         com.get("neil.core.icons") # make sure theme icons are loaded
         accel = com.get('neil.core.accelerators')
         for view in views:
