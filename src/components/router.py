@@ -30,7 +30,7 @@ if __name__ == '__main__':
     raise SystemExit
 
 import neil.com as com
-from gi.repository import GObject, Gtk, Gdk
+from gi.repository import GObject, Gtk, Gdk, Pango
 
 from neil.utils import PLUGIN_FLAGS_MASK, ROOT_PLUGIN_FLAGS,\
      GENERATOR_PLUGIN_FLAGS, EFFECT_PLUGIN_FLAGS,\
@@ -79,10 +79,10 @@ class AttributesDialog(Gtk.Dialog):
     Displays plugin atttributes and allows to edit them.
     """
     __neil__ = dict(
-            id = 'neil.core.attributesdialog',
-            singleton = False,
-            categories = [
-            ]
+        id = 'neil.core.attributesdialog',
+        singleton = False,
+        categories = [
+        ]
     )
 
     def __init__(self, plugin, parent):
@@ -93,10 +93,10 @@ class AttributesDialog(Gtk.Dialog):
         @type plugin: wx.Plugin
         """
         Gtk.Dialog.__init__(self,
-                "Attributes",
-                parent.get_toplevel(),
-                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                None
+            "Attributes",
+            parent.get_toplevel(),
+            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            None
         )
         vbox = Gtk.VBox(False, MARGIN)
         vbox.set_border_width(MARGIN)
@@ -104,11 +104,11 @@ class AttributesDialog(Gtk.Dialog):
         self.pluginloader = plugin.get_pluginloader()
         self.resize(300, 200)
         self.attriblist, self.attribstore, columns = new_listview([
-                ('Attribute', str),
-                ('Value', str),
-                ('Min', str),
-                ('Max', str),
-                ('Default', str),
+            ('Attribute', str),
+            ('Value', str),
+            ('Min', str),
+            ('Max', str),
+            ('Default', str),
         ])
         vbox.add(add_scrollbars(self.attriblist))
         hsizer = Gtk.HButtonBox()
@@ -127,11 +127,11 @@ class AttributesDialog(Gtk.Dialog):
             attrib = self.pluginloader.get_attribute(i)
             self.attribs.append(self.plugin.get_attribute_value(i))
             self.attribstore.append([
-                    prepstr(attrib.get_name()),
-                    "%i" % self.plugin.get_attribute_value(i),
-                    "%i" % attrib.get_value_min(),
-                    "%i" % attrib.get_value_max(),
-                    "%i" % attrib.get_value_default(),
+                prepstr(attrib.get_name()),
+                "%i" % self.plugin.get_attribute_value(i),
+                "%i" % attrib.get_value_min(),
+                "%i" % attrib.get_value_max(),
+                "%i" % attrib.get_value_default(),
             ])
         self.btnset.connect('clicked', self.on_set)
         self.connect('response', self.on_ok)
@@ -194,10 +194,10 @@ class ParameterDialog(Gtk.Dialog):
     Displays parameter sliders for a plugin in a new Dialog.
     """
     __neil__ = dict(
-            id = 'neil.core.parameterdialog',
-            singleton = False,
-            categories = [
-            ]
+        id = 'neil.core.parameterdialog',
+        singleton = False,
+        categories = [
+        ]
     )
 
     def __init__(self, manager, plugin, parent):
@@ -232,10 +232,10 @@ class ParameterDialogManager:
     Manages the different parameter dialogs.
     """
     __neil__ = dict(
-            id = 'neil.core.parameterdialog.manager',
-            singleton = True,
-            categories = [
-            ]
+        id = 'neil.core.parameterdialog.manager',
+        singleton = True,
+        categories = [
+        ]
     )
 
     def __init__(self):
@@ -259,10 +259,10 @@ class PresetDialogManager:
     Manages the different preset dialogs.
     """
     __neil__ = dict(
-            id = 'neil.core.presetdialog.manager',
-            singleton = True,
-            categories = [
-            ]
+        id = 'neil.core.presetdialog.manager',
+        singleton = True,
+        categories = [
+        ]
     )
 
     def __init__(self):
@@ -319,7 +319,7 @@ class PresetDialog(Gtk.Dialog):
 DRAG_FORMAT_PLUGIN_URI = 0
 
 DRAG_FORMATS = [
-        ('application/x-neil-plugin-uri', 0, DRAG_FORMAT_PLUGIN_URI)
+    ('application/x-neil-plugin-uri', 0, DRAG_FORMAT_PLUGIN_URI)
 ]
 
 
@@ -328,20 +328,20 @@ class RoutePanel(Gtk.VBox):
     Contains the view panel and manages parameter dialogs.
     """
     __neil__ = dict(
-            id = 'neil.core.routerpanel',
-            singleton = True,
-            categories = [
-                    'neil.viewpanel',
-                    'view',
-            ]
+        id = 'neil.core.routerpanel',
+        singleton = True,
+        categories = [
+                'neil.viewpanel',
+                'view',
+        ]
     )
 
     __view__ = dict(
-                    label = "Router",
-                    stockid = "neil_router",
-                    shortcut = 'F3',
-                    default = True,
-                    order = 3,
+        label = "Router",
+        stockid = "neil_router",
+        shortcut = 'F3',
+        default = True,
+        order = 3,
     )
 
     def __init__(self):
@@ -493,10 +493,10 @@ class RouteView(Gtk.DrawingArea):
     Allows to monitor and control plugins and their connections.
     """
     __neil__ = dict(
-            id = 'neil.core.router.view',
-            singleton = True,
-            categories = [
-            ]
+        id = 'neil.core.router.view',
+        singleton = True,
+        categories = [
+        ]
     )
 
     current_plugin = None
@@ -634,28 +634,28 @@ class RouteView(Gtk.DrawingArea):
         """
         cfg = config.get_config()
         names = [
-                'MV ${PLUGIN}',
-                'MV ${PLUGIN} Mute',
-                'MV ${PLUGIN} LED Off',
-                'MV ${PLUGIN} LED On',
-                'MV Indicator Background',
-                'MV Indicator Foreground',
-                'MV Indicator Border',
-                'MV Indicator Warning',
-                'MV Indicator Background',
-                'MV Indicator Foreground',
-                'MV Indicator Border',
-                'MV Indicator Warning',
-                'MV Border',
-                'MV Border',
-                'MV Border',
-                'MV Text',
+            'MV ${PLUGIN}',
+            'MV ${PLUGIN} Mute',
+            'MV ${PLUGIN} LED Off',
+            'MV ${PLUGIN} LED On',
+            'MV Indicator Background',
+            'MV Indicator Foreground',
+            'MV Indicator Border',
+            'MV Indicator Warning',
+            'MV Indicator Background',
+            'MV Indicator Foreground',
+            'MV Indicator Border',
+            'MV Indicator Warning',
+            'MV Border',
+            'MV Border',
+            'MV Border',
+            'MV Text',
         ]
         flagids = [
-                (ROOT_PLUGIN_FLAGS, 'Master'),
-                (GENERATOR_PLUGIN_FLAGS, 'Generator'),
-                (EFFECT_PLUGIN_FLAGS, 'Effect'),
-                (CONTROLLER_PLUGIN_FLAGS, 'Controller'),
+            (ROOT_PLUGIN_FLAGS, 'Master'),
+            (GENERATOR_PLUGIN_FLAGS, 'Generator'),
+            (EFFECT_PLUGIN_FLAGS, 'Effect'),
+            (CONTROLLER_PLUGIN_FLAGS, 'Controller'),
         ]
         self.flags2brushes = {}
         for flags, name in flagids:
@@ -1004,7 +1004,6 @@ class RouteView(Gtk.DrawingArea):
         cm = gc.get_colormap()
         #cfg = config.get_config()
         rect = self.get_allocation()
-        import pango
         layout = Pango.Layout(self.get_pango_context())
         #~ layout.set_font_description(self.fontdesc)
         layout.set_width(-1)
@@ -1408,8 +1407,8 @@ __neil__ = dict(
 )
 
 if __name__ == '__main__':
-    import testplayer
-    import utils
+    from neil import testplayer
+    from neil import utils
     player = testplayer.get_player()
     player.load_ccm(utils.filepath('demosongs/paniq-knark.ccm'))
     window = testplayer.TestWindow()

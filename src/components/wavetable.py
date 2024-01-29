@@ -1115,14 +1115,14 @@ class DataEntry(Gtk.Dialog):
 
 
 __all__ = [
-        'EnvelopeView',
-        'WavetablePanel',
+    'EnvelopeView',
+    'WavetablePanel',
 ]
 
 __neil__ = dict(
-        classes=[
-                EnvelopeView,
-                WavetablePanel,
-        ],
+    classes=[
+            EnvelopeView,
+            WavetablePanel,
+    ],
 )
 

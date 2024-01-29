@@ -38,8 +38,8 @@ class InfoPanel(Gtk.VBox):
         categories = [
             'neil.viewpanel',
             'view',
-	    ]
-        )		
+        ]
+        )        
 
     __view__ = dict(
         label = "Info",
@@ -60,7 +60,7 @@ class InfoPanel(Gtk.VBox):
         eventbus.document_loaded += self.update_all
 
     def handle_focus(self):
-    	self.view.grab_focus()
+        self.view.grab_focus()
 
     def reset(self):
         """
@@ -70,12 +70,12 @@ class InfoPanel(Gtk.VBox):
         self.view.reset()
 
     def update_all(self):
-    	self.view.update()
+        self.view.update()
 
 class InfoView(Gtk.TextView):
     """
     Allows to enter and view text saved with the module.
-    """	
+    """    
 
     def __init__(self):
         """
@@ -121,7 +121,7 @@ __neil__ = dict(
     classes = [
         InfoPanel,
         InfoView,
-	],
+    ],
     )
 
 

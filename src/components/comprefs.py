@@ -30,7 +30,7 @@ if __name__ == '__main__':
 from gi.repository import Gtk, GObject
 import neil.com as com
 from neil.common import MARGIN, MARGIN2, MARGIN3
-from neil.utils import new_listview, add_scrollbars
+from neil.utils import new_listview, add_scrollbars, cmp
 
 #OPTIONS = [
 #	'Module',

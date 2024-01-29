@@ -29,6 +29,7 @@ from neil.utils import prepstr, filepath, db2linear, linear2db,\
      new_listview, add_scrollbars, get_clipboard_text,\
      set_clipboard_text, gettext, new_stock_image_button,\
      new_liststore, add_vscrollbar
+from neil.utils import cmp
 import neil.common as common
 import neil.com as com
 import zzub

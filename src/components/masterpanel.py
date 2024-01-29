@@ -23,7 +23,7 @@ if __name__ == '__main__':
     os.system('../../bin/neil-combrowser neil.core.panel.master')
     raise SystemExit
 
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, Gdk
 import cairo
 from neil.common import MARGIN
 import neil.utils as utils
@@ -172,8 +172,8 @@ class MasterPanel(Gtk.VBox):
     """
 
     __neil__ = dict(
-            id='neil.core.panel.master',
-            #singleton=True,
+        id='neil.core.panel.master',
+        #singleton=True,
     )
 
     def __init__(self):
@@ -293,7 +293,7 @@ class MasterPanel(Gtk.VBox):
         self.latency = com.get('neil.core.driver.audio').get_latency()
 
 __neil__ = dict(
-        classes=[
-                MasterPanel,
-        ],
+    classes=[
+            MasterPanel,
+    ],
 )

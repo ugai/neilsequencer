@@ -45,13 +45,13 @@ class PlaybackInfo(Gtk.Dialog):
             'viewdialog',
             'view',
             ]
-	)
+    )
     
     __view__ = dict(
         label = "Playback Info",
         order = 0,
         toggle = True,
-	)
+    )
     
     def __init__(self):
         """
@@ -122,6 +122,6 @@ __all__ = [
 __neil__ = dict(
     classes = [
         PlaybackInfo,
-	],
+    ],
     )
 

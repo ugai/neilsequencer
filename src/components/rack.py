@@ -22,10 +22,10 @@
 Contains all classes and functions needed to render the rack view.
 """
 
-from gi.repository import GObject, Gtk, cairo, PangoCairo
+from gi.repository import GObject, Gtk, Gdk, cairo, PangoCairo
 from neil.utils import prepstr, filepath, db2linear, linear2db, is_debug, filenameify, \
-	get_item_count, question, error, new_listview, add_scrollbars, get_clipboard_text, set_clipboard_text, \
-	gettext, new_stock_image_button, diff, show_machine_manual
+    get_item_count, question, error, new_listview, add_scrollbars, get_clipboard_text, set_clipboard_text, \
+    gettext, new_stock_image_button, diff, show_machine_manual, cmp
 import zzub
 import sys,os
 import fnmatch
@@ -50,14 +50,14 @@ class ParameterView(Gtk.VBox):
     DROP_TARGET_CTRL_SLIDER = 0
 
     DROP_TARGETS = [
-	    ('application/x-controller-slider-drop', Gtk.TargetFlags.SAME_APP, DROP_TARGET_CTRL_SLIDER),
+        ('application/x-controller-slider-drop', Gtk.TargetFlags.SAME_APP, DROP_TARGET_CTRL_SLIDER),
     ]
 
     __neil__ = dict(
-	    id = 'neil.core.parameterview',
-	    singleton = False,
-	    categories = [
-	    ]
+        id = 'neil.core.parameterview',
+        singleton = False,
+        categories = [
+        ]
     )
 
     def __init__(self, plugin):
@@ -122,7 +122,7 @@ class ParameterView(Gtk.VBox):
         self.btnhelp.connect('clicked', self.on_button_help)
         self.connect('destroy', self.on_destroy)
         routeview = com.get('neil.core.routerpanel').view
-        self.connect('key-press-event', routeview.on_key_jazz, self.plugin)		
+        self.connect('key-press-event', routeview.on_key_jazz, self.plugin)        
         self.connect('key-release-event', routeview.on_key_jazz_release, self.plugin)
         self.connect('button-press-event', self.on_left_down)
 
@@ -134,7 +134,7 @@ class ParameterView(Gtk.VBox):
         self.rowgroup = rowgroup
         toplevelgroup.add(scrollwindow)
 
-        self.add(toplevelgroup)		
+        self.add(toplevelgroup)        
         eventbus = com.get('neil.core.eventbus')
         eventbus.zzub_parameter_changed += self.on_zzub_parameter_changed
         self.update_preset_buttons()
@@ -189,7 +189,7 @@ class ParameterView(Gtk.VBox):
             valuelabel.set_alignment(0, 0)
             valuelabel.set_size_request(80, -1)
             slidergroup = Gtk.HBox(False, MARGIN)
-            slidergroup.pack_start(namelabel, expand=False)	
+            slidergroup.pack_start(namelabel, expand=False)    
             slidergroup.add(button)
             slidergroup.pack_end(valuelabel, expand=False)
             sslidergroup.add_widget(button)
@@ -220,7 +220,7 @@ class ParameterView(Gtk.VBox):
             valuelabel.set_alignment(0, 0)
             valuelabel.set_size_request(80, -1)
             slidergroup = Gtk.HBox(False, MARGIN)
-            slidergroup.pack_start(namelabel, expand=False)	
+            slidergroup.pack_start(namelabel, expand=False)    
             slidergroup.add(button)
             slidergroup.pack_end(valuelabel, expand=False)
             sslidergroup.add_widget(button)
@@ -274,9 +274,9 @@ class ParameterView(Gtk.VBox):
             svaluegroup.add_widget(valuelabel)
 
             slidergroup = Gtk.HBox(False, MARGIN)
-            slidergroup.pack_start(namelabel, expand=False)	
-            slidergroup.add(slider)	
-            slidergroup.pack_end(valuelabel, expand=False)	
+            slidergroup.pack_start(namelabel, expand=False)    
+            slidergroup.add(slider)    
+            slidergroup.pack_end(valuelabel, expand=False)    
             rowgroup.pack_start(slidergroup, expand=False)
             self.pid2ctrls[(g, t, i)] = [namelabel, slider, valuelabel]
             slider.connect('button-press-event', self.on_context_menu, (g, t, i))
@@ -322,7 +322,7 @@ class ParameterView(Gtk.VBox):
         return max(swx,400), min((svy+20+ofsy),(3*Gdk.screen_height())/4)
 
     def get_title(self):
-	    return self._title
+        return self._title
 
     def on_drag_data_get(self, btn, context, selection_data, info, time, xxx_todo_changeme):
         (g,t,i) = xxx_todo_changeme
@@ -743,7 +743,7 @@ class ParameterView(Gtk.VBox):
     def on_key_down(self, widget, event, xxx_todo_changeme11):
         """
         Callback that responds to key stroke.
-        """		
+        """        
         (g,t,i) = xxx_todo_changeme11
         kv = event.keyval
         if (kv >= ord('0')) and (kv <= ord('9')):
@@ -780,13 +780,13 @@ class ParameterView(Gtk.VBox):
         #     m =  player.get_midimapping(i)
         #     plugin = player.get_plugin_by_id(m.get_plugin())
         #     player.remove_midimapping(plugin, m.get_group(), m.get_track(), m.get_column())
-        #     player.history_commit("remove MIDI mapping")	
+        #     player.history_commit("remove MIDI mapping")    
 
     def on_button_press(self, widget, event, xxx_todo_changeme12):
         """
         Buttons press on slider
         Used to reset value to default on double click
-        """		
+        """        
         (g,t,i) = xxx_todo_changeme12
         if event.type == Gdk._2BUTTON_PRESS:
             p = self.plugin.get_parameter(g,t,i)
@@ -818,7 +818,7 @@ class ParameterView(Gtk.VBox):
         elif event.direction == Gdk.SCROLL_DOWN:
             v -= 1
         # apply value range constraint
-        v = min(maxv, max(v, minv)) 		
+        v = min(maxv, max(v, minv))         
         self.plugin.set_parameter_value(g,t,i,v,1)
         v = self.plugin.get_parameter_value(g,t,i)
         s.set_value(v)
@@ -876,7 +876,7 @@ class DataEntry(Gtk.Dialog):
             parent.get_toplevel(),  
             Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
             (Gtk.STOCK_OK, Gtk.ResponseType.OK, Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL),
-        )	
+        )    
         self.label = Gtk.Label("Enter Value:")
         self.edit = Gtk.Entry()
         self.edit.set_text(v)
@@ -893,7 +893,7 @@ class DataEntry(Gtk.Dialog):
         self.edit.connect('activate', self.on_text_enter)
 
     def on_text_enter(self, widget):
-	    self.response(Gtk.ResponseType.OK)
+        self.response(Gtk.ResponseType.OK)
 
 class RackPanel(Gtk.VBox):
     """
@@ -903,19 +903,19 @@ class RackPanel(Gtk.VBox):
     """
 
     __neil__ = dict(
-	    id = 'neil.core.rackpanel',
-	    singleton = True,
-	    categories = [
-		    #'neil.viewpanel',
-		    #'view',
-	    ]
+        id = 'neil.core.rackpanel',
+        singleton = True,
+        categories = [
+            #'neil.viewpanel',
+            #'view',
+        ]
     )
 
     __view__ = dict(
-		    label = "Rack",
-		    stockid = "rack",
-		    shortcut = 'F11',
-		    order = 11,
+            label = "Rack",
+            stockid = "rack",
+            shortcut = 'F11',
+            order = 11,
     )
 
     def __init__(self):
@@ -958,9 +958,9 @@ class RackPanel(Gtk.VBox):
             #~ view.set_size_request(*view.get_best_size())
 
 __neil__ = dict(
-	classes = [
-		ParameterView,
-		RackPanel,
-	],
+    classes = [
+        ParameterView,
+        RackPanel,
+    ],
 )
 

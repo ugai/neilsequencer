@@ -37,10 +37,10 @@ from neil.utils import iconpath, show_machine_manual, filenameify
 
 class ContextMenu(Menu):
     __neil__ = dict(
-            id = 'neil.core.contextmenu',
-            singleton = False,
-            categories = [
-            ],
+        id = 'neil.core.contextmenu',
+        singleton = False,
+        categories = [
+        ],
     )
 
     def __init__(self, contextid, context):
@@ -498,8 +498,8 @@ class PluginContextMenu(Gtk.Menu):
             player.autoconnect_target = plugin
 
 __neil__ = dict(
-        classes = [
-                ContextMenu,
-                PluginContextMenu,
-        ],
+    classes = [
+            ContextMenu,
+            PluginContextMenu,
+    ],
 )

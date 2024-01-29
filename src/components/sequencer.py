@@ -38,6 +38,7 @@ from neil.utils import get_clipboard_text, set_clipboard_text, add_scrollbars
 from neil.utils import is_effect, is_generator, is_controller
 from neil.utils import is_root, get_new_pattern_name
 from neil.utils import Menu, wave_names_generator
+from neil.utils import cmp
 import random
 import config
 import neil.common as common
@@ -114,7 +115,6 @@ class SequencerToolBar(Gtk.HBox):
         self.pack_start(self.steplabel, expand=False, fill=False, padding=0)
         self.pack_start(self.stepselect, expand=False, fill=False, padding=0)
         self.pack_start(self.followsong, expand=False, fill=False, padding=0)
-        self.parent = self.get_parent()
 
     def increase_step(self):
         if self.parent.view.step < 64:
@@ -182,19 +182,19 @@ class SequencerPanel(Gtk.VBox):
     Displays all the patterns available for the current track.
     """
     __neil__ = dict(
-            id = 'neil.core.sequencerpanel',
-            singleton = True,
-            categories = [
-                    'neil.viewpanel',
-                    'view',
-            ]
+        id = 'neil.core.sequencerpanel',
+        singleton = True,
+        categories = [
+            'neil.viewpanel',
+            'view',
+        ]
     )
 
     __view__ = dict(
-                    label = "Sequencer",
-                    stockid = "neil_sequencer",
-                    shortcut = 'F4',
-                    order = 4,
+        label = "Sequencer",
+        stockid = "neil_sequencer",
+        shortcut = 'F4',
+        order = 4,
     )
 
     def __init__(self):
@@ -1839,8 +1839,8 @@ __all__ = [
 ]
 
 __neil__ = dict(
-        classes = [
-                SequencerPanel,
-                SequencerView,
-        ],
+    classes = [
+        SequencerPanel,
+        SequencerView,
+    ],
 )

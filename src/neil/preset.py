@@ -163,12 +163,12 @@ class PresetCollection:
         self.version = 1
         self.name = ''
         if filepath:
-            f = file(filepath, 'rb')
-            self.version = read_int(f)
-            self.name = read_string(f)
-            setcount = read_int(f)
-            for index in range(setcount):
-                self.presets.append(Preset(f))
+            with open(filepath, 'rb') as f:
+                self.version = read_int(f)
+                self.name = read_string(f)
+                setcount = read_int(f)
+                for index in range(setcount):
+                    self.presets.append(Preset(f))
             self.sort()
 
     def save(self, filepath):
@@ -178,13 +178,12 @@ class PresetCollection:
         @param filepath: Path to file.
         @type filepath: str
         """
-        f = file(filepath, 'wb')
-        write_int(f, self.version)
-        write_string(f, self.name)
-        write_int(f, len(self.presets))
-        for preset in self.presets:
-            preset.save(f)
-        f.close()
+        with open(filepath, 'wb') as f:
+            write_int(f, self.version)
+            write_string(f, self.name)
+            write_int(f, len(self.presets))
+            for preset in self.presets:
+                preset.save(f)
 
     def sort(self):
         """

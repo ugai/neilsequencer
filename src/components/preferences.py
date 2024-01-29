@@ -26,7 +26,7 @@ import os
 from gi.repository import Gtk
 import webbrowser
 
-from neil.utils import prepstr, buffersize_to_latency, filepath, error, add_scrollbars, new_listview, sharedpath
+from neil.utils import prepstr, buffersize_to_latency, filepath, error, add_scrollbars, new_listview, sharedpath, cmp
 import config
 from neil.common import MARGIN, MARGIN2, MARGIN3
 

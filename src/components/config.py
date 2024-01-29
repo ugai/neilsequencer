@@ -26,7 +26,7 @@ Provides an object which eases access to the applications configuration.
 from gi.repository import Gtk
 import os, glob, re
 
-from neil.utils import filepath, camelcase_to_unixstyle, etcpath, imagepath, iconpath, sharedpath, filenameify
+from neil.utils import filepath, camelcase_to_unixstyle, etcpath, imagepath, iconpath, sharedpath, filenameify, cmp
 import neil.preset as preset
 import configparser
 

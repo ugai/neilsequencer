@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from neil.utils import is_generator, is_effect, is_streamer, PropertyEventHandler, generate_ui_methods, refresh_gui
+from neil.utils import is_generator, is_effect, is_streamer, PropertyEventHandler, generate_ui_methods, refresh_gui, cmp
 from zzub import Player
 from gi.repository import GObject
 import neil.com as com
@@ -29,105 +29,105 @@ import time
 import zzub
 
 DOCUMENT_UI = dict(
-        # insert persistent members at this level, in the format
-        #
-        # <member name> = <descriptor dict>
-        #
-        # <member name> is the base name of the getter/setter/property values
-        # and the private member variable.
-        #
-        # keys you can enter into the dict:
-        #
-        # default: initialization value. if omitted, a default will be deduced
-        # from the value type.
-        #
-        # vtype: value type as type object. if omitted, the type will be deduced from
-        #        the default value. allowed types are int, bool, str, float.
-        #
-        # doc: a doc string describing the meaning of the setting. name it so that
-        #      it can be appended to "Returns ..." and "Sets ...". if omitted,
-        #      a default will be used.
-        #
-        # event: name of the global event to be triggered. usually generated
-        #        by default if not given.
-        #
-        # onset: an optional function to be called before the value is assigned.
-        #            the function should have the signature
-        #
-        #        def func(value): -> value
-        #
-        # onget: an optional function to be called before the value is returned
-        #        to the calling function.
-        #
-        #        def func(value): -> value
-        #
-        # for the setting below, active_plugins, you can access player.get_active_plugins(),
-        # player.set_active_plugins(plugins), and player.active_plugins as a property.
-        # when changed, the event active_plugins_changed will be triggered.
-        active_plugins = dict(vtype=zzub.Plugin, list=True, doc="the list of active plugins."),
-        active_patterns = dict(vtype=(zzub.Plugin, int), list=True, doc="the list of active patterns (zzub.Plugin, index)."),
-        active_waves = dict(vtype=zzub.Wave, list=True, doc="the list of active waves."),
-        octave = dict(vtype=int, default=4, doc="the current octave to be used for keyjazz."),
-        autoconnect_target = dict(vtype=zzub.Plugin, doc="the plugin to connect to automatically when creating a new plugin."),
-        sequence_step = dict(vtype=int, default=64, doc="the current step size for sequencers."),
-        plugin_origin = dict(vtype=int, list=True, default=[0.0, 0.0], doc="the origin position for new plugins."),
-        solo_plugin = dict(vtype=zzub.Plugin, doc="if set, the plugin that is currently set to solo."),
-        document_path = dict(vtype=str, doc="path to the current document."),
+    # insert persistent members at this level, in the format
+    #
+    # <member name> = <descriptor dict>
+    #
+    # <member name> is the base name of the getter/setter/property values
+    # and the private member variable.
+    #
+    # keys you can enter into the dict:
+    #
+    # default: initialization value. if omitted, a default will be deduced
+    # from the value type.
+    #
+    # vtype: value type as type object. if omitted, the type will be deduced from
+    #        the default value. allowed types are int, bool, str, float.
+    #
+    # doc: a doc string describing the meaning of the setting. name it so that
+    #      it can be appended to "Returns ..." and "Sets ...". if omitted,
+    #      a default will be used.
+    #
+    # event: name of the global event to be triggered. usually generated
+    #        by default if not given.
+    #
+    # onset: an optional function to be called before the value is assigned.
+    #            the function should have the signature
+    #
+    #        def func(value): -> value
+    #
+    # onget: an optional function to be called before the value is returned
+    #        to the calling function.
+    #
+    #        def func(value): -> value
+    #
+    # for the setting below, active_plugins, you can access player.get_active_plugins(),
+    # player.set_active_plugins(plugins), and player.active_plugins as a property.
+    # when changed, the event active_plugins_changed will be triggered.
+    active_plugins = dict(vtype=zzub.Plugin, list=True, doc="the list of active plugins."),
+    active_patterns = dict(vtype=(zzub.Plugin, int), list=True, doc="the list of active patterns (zzub.Plugin, index)."),
+    active_waves = dict(vtype=zzub.Wave, list=True, doc="the list of active waves."),
+    octave = dict(vtype=int, default=4, doc="the current octave to be used for keyjazz."),
+    autoconnect_target = dict(vtype=zzub.Plugin, doc="the plugin to connect to automatically when creating a new plugin."),
+    sequence_step = dict(vtype=int, default=64, doc="the current step size for sequencers."),
+    plugin_origin = dict(vtype=int, list=True, default=[0.0, 0.0], doc="the origin position for new plugins."),
+    solo_plugin = dict(vtype=zzub.Plugin, doc="if set, the plugin that is currently set to solo."),
+    document_path = dict(vtype=str, doc="path to the current document."),
 )
 
 
 class NeilPlayer(Player, PropertyEventHandler):
     __neil__ = dict(
-            id='neil.core.player',
-            singleton=True,
-            categories=[
-                    'pythonconsole.locals',
-            ],
+        id='neil.core.player',
+        singleton=True,
+        categories=[
+                'pythonconsole.locals',
+        ],
     )
 
     _exclude_event_debug_ = [
-            zzub.zzub_event_type_parameter_changed,
+        zzub.zzub_event_type_parameter_changed,
     ]
 
     _event_types_ = dict(
-            zzub_event_type_double_click = dict(args=None),
-            zzub_event_type_new_plugin = dict(args='new_plugin'),
-            zzub_event_type_delete_plugin = dict(args='delete_plugin'),
-            zzub_event_type_pre_delete_plugin = dict(args='delete_plugin'),
-            zzub_event_type_disconnect = dict(args='disconnect_plugin'),
-            zzub_event_type_connect = dict(args='connect_plugin'),
-            zzub_event_type_plugin_changed = dict(args='plugin_changed'),
-            zzub_event_type_parameter_changed = dict(args='change_parameter'),
-            zzub_event_type_set_tracks = dict(args=None),
-            zzub_event_type_set_sequence_tracks = dict(args='set_sequence_tracks'),
-            zzub_event_type_set_sequence_event = dict(args='set_sequence_event'),
-            zzub_event_type_new_pattern = dict(args='new_pattern'),
-            zzub_event_type_delete_pattern = dict(args='delete_pattern'),
-            zzub_event_type_pre_delete_pattern = dict(args='delete_pattern'),
-            zzub_event_type_edit_pattern = dict(args='edit_pattern'),
-            zzub_event_type_pattern_changed = dict(args='pattern_changed'),
-            zzub_event_type_pattern_insert_rows = dict(args='pattern_insert_rows'),
-            zzub_event_type_pattern_remove_rows = dict(args='pattern_remove_rows'),
-            zzub_event_type_sequencer_add_track = dict(args=None),
-            zzub_event_type_sequencer_remove_track = dict(args=None),
-            zzub_event_type_sequencer_changed = dict(args=None),
-            zzub_event_type_pre_disconnect = dict(args=None),
-            zzub_event_type_pre_connect = dict(args=None),
-            zzub_event_type_post_connect = dict(args=None),
-            zzub_event_type_pre_set_tracks = dict(args=None),
-            zzub_event_type_post_set_tracks = dict(args=None),
-            zzub_event_type_envelope_changed = dict(args=None),
-            zzub_event_type_slices_changed = dict(args=None),
-            zzub_event_type_wave_changed = dict(args='change_wave'),
-            zzub_event_type_delete_wave = dict(args='delete_wave'),
-            zzub_event_type_load_progress = dict(args=None),
-            zzub_event_type_midi_control = dict(args='midi_message'),
-            zzub_event_type_wave_allocated = dict(args='allocate_wavelevel'),
-            zzub_event_type_player_state_changed = dict(args='player_state_changed'),
-            zzub_event_type_osc_message = dict(args='osc_message'),
-            zzub_event_type_vu = dict(args='vu'),
-            zzub_event_type_custom = dict(args='custom'),
-            zzub_event_type_all = dict(args='all'),
+        zzub_event_type_double_click = dict(args=None),
+        zzub_event_type_new_plugin = dict(args='new_plugin'),
+        zzub_event_type_delete_plugin = dict(args='delete_plugin'),
+        zzub_event_type_pre_delete_plugin = dict(args='delete_plugin'),
+        zzub_event_type_disconnect = dict(args='disconnect_plugin'),
+        zzub_event_type_connect = dict(args='connect_plugin'),
+        zzub_event_type_plugin_changed = dict(args='plugin_changed'),
+        zzub_event_type_parameter_changed = dict(args='change_parameter'),
+        zzub_event_type_set_tracks = dict(args=None),
+        zzub_event_type_set_sequence_tracks = dict(args='set_sequence_tracks'),
+        zzub_event_type_set_sequence_event = dict(args='set_sequence_event'),
+        zzub_event_type_new_pattern = dict(args='new_pattern'),
+        zzub_event_type_delete_pattern = dict(args='delete_pattern'),
+        zzub_event_type_pre_delete_pattern = dict(args='delete_pattern'),
+        zzub_event_type_edit_pattern = dict(args='edit_pattern'),
+        zzub_event_type_pattern_changed = dict(args='pattern_changed'),
+        zzub_event_type_pattern_insert_rows = dict(args='pattern_insert_rows'),
+        zzub_event_type_pattern_remove_rows = dict(args='pattern_remove_rows'),
+        zzub_event_type_sequencer_add_track = dict(args=None),
+        zzub_event_type_sequencer_remove_track = dict(args=None),
+        zzub_event_type_sequencer_changed = dict(args=None),
+        zzub_event_type_pre_disconnect = dict(args=None),
+        zzub_event_type_pre_connect = dict(args=None),
+        zzub_event_type_post_connect = dict(args=None),
+        zzub_event_type_pre_set_tracks = dict(args=None),
+        zzub_event_type_post_set_tracks = dict(args=None),
+        zzub_event_type_envelope_changed = dict(args=None),
+        zzub_event_type_slices_changed = dict(args=None),
+        zzub_event_type_wave_changed = dict(args='change_wave'),
+        zzub_event_type_delete_wave = dict(args='delete_wave'),
+        zzub_event_type_load_progress = dict(args=None),
+        zzub_event_type_midi_control = dict(args='midi_message'),
+        zzub_event_type_wave_allocated = dict(args='allocate_wavelevel'),
+        zzub_event_type_player_state_changed = dict(args='player_state_changed'),
+        zzub_event_type_osc_message = dict(args='osc_message'),
+        zzub_event_type_vu = dict(args='vu'),
+        zzub_event_type_custom = dict(args='custom'),
+        zzub_event_type_all = dict(args='all'),
     )
 
     def __init__(self):
@@ -774,9 +774,9 @@ class NeilPlayer(Player, PropertyEventHandler):
 generate_ui_methods(NeilPlayer, DOCUMENT_UI)
 
 __neil__ = dict(
-        classes = [
-                NeilPlayer,
-        ],
+    classes = [
+            NeilPlayer,
+    ],
 )
 
 if __name__ == '__main__':

@@ -37,6 +37,7 @@ from neil.utils import error, get_new_pattern_name
 from neil.utils import Menu, AcceleratorMap
 from neil.utils import new_stock_image_button, show_machine_manual
 from neil.utils import filenameify
+from neil.utils import cmp
 
 import zzub
 import neil.common as common

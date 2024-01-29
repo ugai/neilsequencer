@@ -27,7 +27,7 @@ from neil.common import MARGIN, MARGIN0
 from neil.utils import new_image_button, new_image_toggle_button, imagepath
 from neil.utils import ObjectHandlerGroup
 import config
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, Gdk
 import neil.com as com
 import zzub
 
@@ -333,7 +333,7 @@ class TransportPanel(Gtk.HBox):
 
 
 __neil__ = dict(
-        classes = [
-                TransportPanel,
-        ],
+    classes = [
+            TransportPanel,
+    ],
 )
