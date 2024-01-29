@@ -133,7 +133,7 @@ class KnobTooltip:
     def __init__(self):
         self.tooltip_window = Gtk.Window(Gtk.WindowType.POPUP)
         self.tooltip = Gtk.Label()
-        self.tooltip.modify_fg(Gtk.STATE_NORMAL, hls_to_color(0.0, 1.0, 0.0))
+        self.tooltip.modify_fg(Gtk.StateType.NORMAL, hls_to_color(0.0, 1.0, 0.0))
         self.tooltip_timeout = None
         vbox = Gtk.VBox()
         vbox2 = Gtk.VBox()
@@ -141,7 +141,7 @@ class KnobTooltip:
         vbox2.set_border_width(2)
         vbox.add(vbox2)
         self.tooltip_window.add(vbox)
-        vbox.connect('expose-event', self.on_tooltip_expose)
+        vbox.connect('draw', self.on_tooltip_expose)
 
     def show_tooltip(self, knob):
         text = knob.format_value(knob.value)
@@ -206,7 +206,7 @@ class Knob(Gtk.VBox):
         self.lscale = False
         self.set_double_buffered(True)
         self.connect('realize', self.on_realize)
-        self.connect('expose-event', self.on_expose)
+        self.connect('draw', self.on_expose)
         
     def format_value(self, value):
         return ("%%.%if" % self.digits) % value
@@ -565,7 +565,7 @@ class DecoBox(Gtk.VBox):
         self.ratio = 0.382
         self.alpha = 1.0
         self.set_app_paintable(True)
-        self.connect('expose-event', self.on_expose)
+        self.connect('draw', self.on_expose)
         self.vbox = Gtk.VBox()
         hbox = Gtk.HBox()
         self.pack_start(hbox, expand=False)
@@ -717,7 +717,7 @@ class LCD(Gtk.DrawingArea):
         self.border = 6
         self.scale = 1
         self.calc_size()
-        self.connect('expose-event', self.on_expose)
+        self.connect('draw', self.on_expose)
         self.connect('realize', self.on_realize)
         
     def calc_size(self):
@@ -903,7 +903,7 @@ if __name__ == '__main__':
             knob.set_gap_depth(0)
             knob.set_segments(36)
         return knob
-    window.modify_bg(Gtk.STATE_NORMAL, hls_to_color(0.0, 0.4, s))
+    window.modify_bg(Gtk.StateType.NORMAL, hls_to_color(0.0, 0.4, s))
     hbox = Gtk.HBox(False, 6)
     hbox.set_border_width(6)
     vb, hb = new_vbox("LMAO")

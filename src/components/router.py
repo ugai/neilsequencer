@@ -319,7 +319,7 @@ class PresetDialog(Gtk.Dialog):
 DRAG_FORMAT_PLUGIN_URI = 0
 
 DRAG_FORMATS = [
-    ('application/x-neil-plugin-uri', 0, DRAG_FORMAT_PLUGIN_URI)
+    Gtk.TargetEntry.new('application/x-neil-plugin-uri', 0, DRAG_FORMAT_PLUGIN_URI)
 ]
 
 
@@ -386,9 +386,9 @@ class VolumeSlider(Gtk.Window):
         self.drawingarea.add_events(Gdk.EventMask.ALL_EVENTS_MASK)
         self.drawingarea.set_property('can-focus', True)
         self.resize(VOLBARWIDTH, VOLBARHEIGHT)
-        self.hide_all()
+        self.hide()
         self.drawingarea.connect('motion-notify-event', self.on_motion)
-        self.drawingarea.connect('expose-event', self.expose)
+        self.drawingarea.connect('draw', self.expose)
         self.drawingarea.connect('button-release-event', self.on_left_up)
 
     def expose(self, widget, event):

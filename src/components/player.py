@@ -260,12 +260,12 @@ class NeilPlayer(Player, PropertyEventHandler):
         # create a recorder plugin
         if self.__streamrecorder:
             return
-        loader = self.get_pluginloader_by_name('@zzub.org/recorder/file')
+        loader = self.get_pluginloader_by_name(b'@zzub.org/recorder/file')
         if not loader:
             print("Can't find file recorder plugin loader.", file=sys.stderr)
             return
         flags = zzub.zzub_plugin_flag_no_undo | zzub.zzub_plugin_flag_no_save
-        self.__streamrecorder = zzub.Player.create_plugin(self, None, 0, "_RecorderPlugin", loader, flags)
+        self.__streamrecorder = zzub.Player.create_plugin(self, None, 0, b"_RecorderPlugin", loader, flags)
         if not self.__streamrecorder:
             print("Can't create file recorder plugin instance.", file=sys.stderr)
             return

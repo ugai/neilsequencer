@@ -24,7 +24,7 @@ Contains the information displayed in the about box.
 
 import sys
 from neil.utils import prepstr
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, GdkPixbuf
 
 NAME = "Neil"
 VERSION = "0.9"
@@ -105,7 +105,7 @@ class AboutDialog(Gtk.AboutDialog):
         self.set_authors(AUTHORS)
         self.set_artists(ARTISTS)
         self.set_documenters(DOCUMENTERS)
-        self.set_logo(Gdk.pixbuf_new_from_file(imagepath("alien.png")))
+        self.set_logo(GdkPixbuf.Pixbuf.new_from_file(imagepath("alien.png")))
 
     def show(self):
         self.run()

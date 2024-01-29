@@ -26,7 +26,7 @@ which have no specific module or class they belong to.
 import time, sys, math, os, zzub, imp
 from string import ascii_letters, digits
 import struct
-from gi.repository import GObject, Gtk, Gdk
+from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
 import weakref
 import neil.com as com
 
@@ -697,7 +697,7 @@ def new_liststore(view, columns):
             cellrenderer.connect('toggled', th.fixed_toggled, liststore)
             column.pack_start(cellrenderer)
             column.add_attribute(cellrenderer, 'active', i)
-        elif coltype == Gdk.Pixbuf:
+        elif coltype == GdkPixbuf:
             cellrenderer = Gtk.CellRendererPixbuf()
             column.pack_start(cellrenderer)
             column.add_attribute(cellrenderer, 'pixbuf', i)
@@ -714,7 +714,7 @@ def new_image_button(path, tooltip, width=20, height=20):
     Creates a button with a single image.
     """
     image = Gtk.Image()
-    image.set_from_pixbuf(Gdk.pixbuf_new_from_file_at_size(path, width, height))
+    image.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(path, width, height))
     button = Gtk.Button()
     button.set_tooltip_text(tooltip)
     button.set_image(image)
@@ -751,7 +751,7 @@ def new_image_toggle_button(path, tooltip=None, width=20, height=20):
     Creates a toggle button with a single image.
     """
     image = Gtk.Image()
-    image.set_from_pixbuf(Gdk.pixbuf_new_from_file_at_size(path, width, height))
+    image.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(path, width, height))
     button = Gtk.ToggleButton()
     if tooltip:
         button.set_tooltip_text(tooltip)
@@ -1105,7 +1105,7 @@ class Menu(Gtk.Menu):
         item = Gtk.ImageMenuItem(stock_id=label)
         if isinstance(icon_or_path, str):
             image = Gtk.Image()
-            image.set_from_pixbuf(Gdk.pixbuf_new_from_file(icon_or_path))
+            image.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file(icon_or_path))
         elif isinstance(icon_or_path, Gtk.Image):
             image = icon_or_path
         item.set_image(image)
@@ -1381,7 +1381,7 @@ class ImageToggleButton(Gtk.ToggleButton):
     """
     def __init__(self, path, tooltip=None, width=20, height=20):
         self.image = Gtk.Image()
-        self.image.set_from_pixbuf(Gdk.pixbuf_new_from_file_at_size(path, width, height))
+        self.image.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(path, width, height))
         Gtk.ToggleButton.__init__(self)
         if tooltip:
             self.set_tooltip_text(tooltip)

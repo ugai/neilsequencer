@@ -90,12 +90,12 @@ class TransportPanel(Gtk.HBox):
         self.btnplay = new_image_toggle_button(imagepath("playback_play.svg"), "Play (F5/F6)")
 
         self.btnrecord = new_image_toggle_button(imagepath("playback_record.svg"), "Record (F7)")
-        self.btnrecord.modify_bg(Gtk.STATE_ACTIVE, Gdk.color_parse("red"))
+        self.btnrecord.modify_bg(Gtk.StateType.ACTIVE, Gdk.color_parse("red"))
 
         self.btnstop = new_image_button(imagepath("playback_stop.svg"), "Stop (F8)")
 
         self.btnloop = new_image_toggle_button(imagepath("playback_repeat.svg"), "Repeat")
-        self.btnloop.modify_bg(Gtk.STATE_ACTIVE, Gdk.color_parse("green"))
+        self.btnloop.modify_bg(Gtk.StateType.ACTIVE, Gdk.color_parse("green"))
 
         self.btnpanic = new_image_toggle_button(imagepath("playback_panic.svg"), "Panic (F12)")
 
@@ -104,10 +104,10 @@ class TransportPanel(Gtk.HBox):
         combosizer = Gtk.HBox(False, MARGIN)
 
         hbox = Gtk.HBox(False, MARGIN0)
-        hbox.pack_start(self.btnplay, expand=False)
-        hbox.pack_start(self.btnrecord, expand=False)
-        hbox.pack_start(self.btnstop, expand=False)
-        hbox.pack_start(self.btnloop, expand=False)
+        hbox.pack_start(self.btnplay, expand=False, fill=False, padding=0)
+        hbox.pack_start(self.btnrecord, expand=False, fill=False, padding=0)
+        hbox.pack_start(self.btnstop, expand=False, fill=False, padding=0)
+        hbox.pack_start(self.btnloop, expand=False, fill=False, padding=0)
         self.transport_buttons = hbox.get_children() + [self.btnpanic]
 
         def on_realize(self):
@@ -117,32 +117,32 @@ class TransportPanel(Gtk.HBox):
                 e.set_size_request(w, w)
         self.connect('realize', on_realize)
 
-        combosizer.pack_start(hbox, expand=False)
-        combosizer.pack_start(Gtk.VSeparator(), expand=False)
+        combosizer.pack_start(hbox, expand=False, fill=False, padding=0)
+        combosizer.pack_start(Gtk.VSeparator(), expand=False, fill=False, padding=0)
 
-        combosizer.pack_start(self.bpmlabel, expand=False)
-        combosizer.pack_start(self.bpm, expand=False)
-        combosizer.pack_start(self.tpblabel, expand=False)
-        combosizer.pack_start(self.tpb, expand=False)
+        combosizer.pack_start(self.bpmlabel, expand=False, fill=False, padding=0)
+        combosizer.pack_start(self.bpm, expand=False, fill=False, padding=0)
+        combosizer.pack_start(self.tpblabel, expand=False, fill=False, padding=0)
+        combosizer.pack_start(self.tpb, expand=False, fill=False, padding=0)
 
-        combosizer.pack_start(Gtk.VSeparator(), expand=False)
+        combosizer.pack_start(Gtk.VSeparator(), expand=False, fill=False, padding=0)
         cpubox = Gtk.HBox(False, MARGIN)
-        cpubox.pack_start(self.cpulabel, expand=False)
+        cpubox.pack_start(self.cpulabel, expand=False, fill=False, padding=0)
         #cpubox.pack_start(self.cpu, expand=False)
-        cpubox.pack_start(self.cpuvalue, expand=False)
+        cpubox.pack_start(self.cpuvalue, expand=False, fill=False, padding=0)
         cpuvbox = Gtk.VBox(False, MARGIN0)
-        cpuvbox.pack_start(Gtk.VBox())
-        cpuvbox.pack_start(cpubox, expand=False)
-        cpuvbox.pack_end(Gtk.VBox())
-        combosizer.pack_start(cpuvbox, expand=False)
-        combosizer.pack_start(Gtk.VSeparator(), expand=False)
-        combosizer.pack_start(self.btnpanic, expand=False)
-        combosizer.pack_start(self.volume_button, expand=False)
+        cpuvbox.pack_start(Gtk.VBox(), expand=False, fill=False, padding=0)
+        cpuvbox.pack_start(cpubox, expand=False, fill=False, padding=0)
+        cpuvbox.pack_end(Gtk.VBox(), expand=False, fill=False, padding=0)
+        combosizer.pack_start(cpuvbox, expand=False, fill=False, padding=0)
+        combosizer.pack_start(Gtk.VSeparator(), expand=False, fill=False, padding=0)
+        combosizer.pack_start(self.btnpanic, expand=False, fill=False, padding=0)
+        combosizer.pack_start(self.volume_button, expand=False, fill=False, padding=0)
 
         # To center the transport panel uncomment the HBox's below.
-        self.pack_start(Gtk.HBox())
-        self.pack_start(combosizer, expand=False)
-        self.pack_end(Gtk.HBox())
+        self.pack_start(Gtk.HBox(), expand=False, fill=False, padding=0)
+        self.pack_start(combosizer, expand=False, fill=False, padding=0)
+        self.pack_end(Gtk.HBox(), expand=False, fill=False, padding=0)
 
         self.set_border_width(MARGIN)
         player = com.get('neil.core.player')

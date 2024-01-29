@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, 
 # Boston, MA  02110-1301, USA.
 
-from gi.repository import GObject, Gtk, Gdk
+from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
 import neil.utils as utils, os, stat
 from neil.utils import new_stock_image_toggle_button, ObjectHandlerGroup
 from neil.utils import is_effect,is_generator,is_controller,\
@@ -69,7 +69,7 @@ class SearchPluginsDialog(Gtk.Window):
         self.searchbox = Gtk.Entry()
         self.treeview = Gtk.TreeView()
         new_liststore(self.treeview, [
-            ('Icon', Gdk.Pixbuf),
+            ('Icon', GdkPixbuf),
             ('Name', str, dict(markup=True)),
             (None, object),
             (None, str, dict(markup=True)),

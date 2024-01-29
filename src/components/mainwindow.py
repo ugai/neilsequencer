@@ -20,7 +20,7 @@
 
 import functools
 import os
-from gi.repository import GObject, Gtk, Gdk
+from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
 from neil.utils import format_time, ticks_to_time, prepstr, linear2db, db2linear, filepath, \
                 is_debug, question, error, add_scrollbars, file_filter, new_stock_image_toggle_button, \
                 new_stock_image_button, message, refresh_gui, show_manual, cmp
@@ -333,20 +333,25 @@ class NeilFrame(Gtk.Window):
         self.playback_info = com.get('neil.core.playback')
         self.framepanel = com.get('neil.core.framepanel')
 
+        assert self.master
+        assert self.transport
+        assert self.playback_info
+        assert self.framepanel
+
         hbox = Gtk.HBox()
         hbox.pack_start(self.framepanel, expand=False, fill=False, padding=0)
-        hbox.pack_end(self.master, expand=False)
+        hbox.pack_end(self.master, expand=False, fill=False, padding=0)
         vbox.add(hbox)
 
-        vbox.pack_start(self.transport, expand=False)
+        vbox.pack_start(self.transport, expand=False, fill=False, padding=0)
 
         self.update_title()
         Gtk.window_set_default_icon_list(
-                        Gdk.pixbuf_new_from_file(hicoloriconpath("48x48/apps/neil.png")),
-                        Gdk.pixbuf_new_from_file(hicoloriconpath("32x32/apps/neil.png")),
-                        Gdk.pixbuf_new_from_file(hicoloriconpath("24x24/apps/neil.png")),
-                        Gdk.pixbuf_new_from_file(hicoloriconpath("22x22/apps/neil.png")),
-                        Gdk.pixbuf_new_from_file(hicoloriconpath("16x16/apps/neil.png")))
+                        GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("48x48/apps/neil.png")),
+                        GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("32x32/apps/neil.png")),
+                        GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("24x24/apps/neil.png")),
+                        GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("22x22/apps/neil.png")),
+                        GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("16x16/apps/neil.png")))
         self.resize(750, 550)
 
         self.connect('key-press-event', self.on_key_down)

@@ -50,7 +50,7 @@ class ParameterView(Gtk.VBox):
     DROP_TARGET_CTRL_SLIDER = 0
 
     DROP_TARGETS = [
-        ('application/x-controller-slider-drop', Gtk.TargetFlags.SAME_APP, DROP_TARGET_CTRL_SLIDER),
+        Gtk.TargetEntry.new('application/x-controller-slider-drop', Gtk.TargetFlags.SAME_APP, DROP_TARGET_CTRL_SLIDER),
     ]
 
     __neil__ = dict(

@@ -45,7 +45,7 @@ class PackageBrowserDialog(Gtk.Dialog):
         if hide_on_delete:
             self.connect('delete-event', self.hide_on_delete)
         self.resize(600, 500)
-        #self.ifacestore = Gtk.TreeStore(Gdk.Pixbuf, str, GObject.TYPE_PYOBJECT)
+        #self.ifacestore = Gtk.TreeStore(GdkPixbuf, str, GObject.TYPE_PYOBJECT)
         self.ifacestore = Gtk.TreeStore(str, GObject.TYPE_PYOBJECT)
         self.ifacelist = Gtk.TreeView(self.ifacestore)
         self.ifacelist.set_property('headers-visible', False)

@@ -22,7 +22,7 @@ if __name__ == '__main__':
     import os
     os.environ['NEIL_BASE_PATH'] = '/home/paniq/devel/neil'
 import neil.com as com
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 import glob, os
 from neil.utils import filepath, get_root_folder_path, iconpath, imagepath
@@ -68,14 +68,14 @@ class IconLibrary:
                 mask = searchpath + '/*' + ext
                 for filename in glob.glob(mask):
                     key = os.path.splitext(os.path.basename(filename))[0]
-                    pixbuf = Gdk.pixbuf_new_from_file(filename)
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
                     w,h = pixbuf.get_width(),pixbuf.get_height()
                     iconsizes = icons.get(key, {})
                     iconsizes[(w,h)] = pixbuf
                     icons[key] = iconsizes
         for key,iconsizes in list(icons.items()):
             for size in sizenames:
-                w,h = Gtk.IconSize.lookup(size)
+                ret,w,h = Gtk.IconSize.lookup(size)
                 if (w,h) in iconsizes:
                     pixbuf = iconsizes[(w,h)]
                 else:

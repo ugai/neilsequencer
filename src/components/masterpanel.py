@@ -225,7 +225,7 @@ class MasterPanel(Gtk.VBox):
         self.connect('realize', self.on_realize)
 
     def on_realize(self, widget):
-        self.clipbtn_org_color = self.clipbtn.get_style().bg[Gtk.STATE_NORMAL]
+        self.clipbtn_org_color = self.clipbtn.get_style().bg[Gtk.StateType.NORMAL]
 
     def on_zzub_parameter_changed(self, plugin, group, track, param, value):
         player = com.get('neil.core.player')
@@ -266,12 +266,12 @@ class MasterPanel(Gtk.VBox):
         master = player.get_plugin(0)
         maxL, maxR = master.get_last_peak()
         self.clipbtn.set_label("%.1f dbFS" % utils.linear2db(min(maxL, maxR, 1.)))
-        self.clipbtn.modify_bg(Gtk.STATE_NORMAL, self.clipbtn_org_color)
+        self.clipbtn.modify_bg(Gtk.StateType.NORMAL, self.clipbtn_org_color)
 
     def on_clipped(self, widget, level):
         # db = utils.linear2db(level, widget.range)
         self.clipbtn.set_label('CLIP')
-        self.clipbtn.modify_bg(Gtk.STATE_NORMAL, Gdk.Color("#f00"))
+        self.clipbtn.modify_bg(Gtk.StateType.NORMAL, Gdk.Color("#f00"))
 
     def update_all(self):
         """
