@@ -27,6 +27,7 @@ if __name__ == '__main__':
 	os.system('../../bin/neil-combrowser neil.core.pref.components')
 	raise SystemExit
 
+import functools
 from gi.repository import Gtk, GObject
 import neil.com as com
 from neil.common import MARGIN, MARGIN2, MARGIN3
@@ -64,7 +65,7 @@ class ComponentPanel(Gtk.VBox):
 		Gtk.VBox.__init__(self)
 		self.set_border_width(MARGIN)
 		
-		frame1 = Gtk.Frame("Components")
+		frame1 = Gtk.Frame(label="Components")
 		fssizer = Gtk.VBox(False, MARGIN)
 		fssizer.set_border_width(MARGIN)
 		frame1.add(fssizer)
@@ -77,12 +78,12 @@ class ComponentPanel(Gtk.VBox):
 		self.compolist.set_headers_visible(False)
 		def cmp_package(a,b):
 			return cmp(a.name.lower(), b.name.lower())
-		packages = sorted(com.get_packages(), cmp_package)
+		packages = sorted(com.get_packages(), key=functools.cmp_to_key(cmp_package))
 		for package in packages:
 			text = '<b>' + package.name + '</b>' + '\n'
 			text += package.description
 			store.append([True, package.icon, text, package])
-		fssizer.pack_start(add_scrollbars(self.compolist))
+		fssizer.pack_start(add_scrollbars(self.compolist), expand=False, fill=False, padding=0)
 		self.add(frame1)
 		
 	def apply(self):

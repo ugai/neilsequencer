@@ -28,6 +28,8 @@ if __name__ == '__main__':
     os.system('../../bin/neil-combrowser neil.core.patternpanel')
     raise SystemExit
 
+import functools
+
 import neil.com as com
 from gi.repository import GObject, Gtk, Gdk, Pango
 
@@ -149,7 +151,7 @@ def show_pattern_dialog(parent, name, length, dlgmode, letswitch=True):
     dlg.edtname.select_region(0, -1)
     dlg.edtname.grab_focus()
     response = dlg.run()
-    dlg.hide_all()
+    dlg.hide()
     result = None
     if response == Gtk.ResponseType.OK:
         switch = int(dlg.chkswitch.get_active())
@@ -334,7 +336,7 @@ class PatternToolBar(Gtk.HBox):
 
         def cmp_func(a, b):
             return cmp(a.get_name().lower(), b.get_name().lower())
-        plugins = sorted(list(player.get_plugin_list()), cmp_func)
+        plugins = sorted(list(player.get_plugin_list()), key=functools.cmp_to_key(cmp_func))
         return [(plugin.get_name(), plugin) for plugin in plugins]
 
     def get_plugin_sel(self):
@@ -1142,7 +1144,7 @@ class PatternView(Gtk.DrawingArea):
         self.subindex = min(max(si, 0), self.subindex_count[self.group][self.index] - 1)
 
     def expose(self, widget, *args):
-        self.context = widget.window.cairo_create()
+        self.context = widget.get_window().cairo_create()
         if self.current_plugin != self.get_plugin():
             self.pattern_changed()
             self.current_plugin = self.get_plugin()
@@ -1156,12 +1158,14 @@ class PatternView(Gtk.DrawingArea):
         return False
 
     def redraw(self, *args):
-        if self.get_window() is not None:
+        window = self.get_window()
+        if window is not None:
             w, h = self.get_client_size()
-            self.window.invalidate_rect((0, 0, w, h), False)
+            window.invalidate_rect(Gdk.Rectangle(0, 0, w, h), False)
 
     def on_active_patterns_changed(self, selpatterns):
-        if self.get_window() is not None:
+        window = self.get_window()
+        if window is not None:
             self.pattern_changed()
 
     def pattern_changed(self, *args):
@@ -1651,7 +1655,7 @@ class PatternView(Gtk.DrawingArea):
         if event.button == 1:
             x, y = int(event.x), int(event.y)
             row, group, track, index, subindex = self.pos_to_pattern((x, y))
-            if event.type == Gdk._2BUTTON_PRESS:
+            if event.type == Gdk.EventType._2BUTTON_PRESS:
                 self.selection.mode = SEL_COLUMN
                 self.selection.begin = 0
                 self.selection.end = self.row_count
@@ -1678,7 +1682,8 @@ class PatternView(Gtk.DrawingArea):
         @param event: Mouse event
         @type event: wx.MouseEvent
         """
-        x, y, state = self.window.get_pointer()
+        window = self.get_window()
+        x, y, state = window.get_pointer()
         x, y = int(x), int(y)
         row, group, track, index, subindex = self.pos_to_pattern((x, y))
         if self.dragging:
@@ -2425,7 +2430,8 @@ class PatternView(Gtk.DrawingArea):
                 self.statuslabels[1].set_label("")
 
     def update_all(self):
-        if self.get_window() is not None and self.window.is_visible():
+        window = self.get_window()
+        if window is not None and window.is_visible():
             self.prepare_textbuffer()
             self.refresh_view()
 
@@ -2440,9 +2446,10 @@ class PatternView(Gtk.DrawingArea):
     def create_xor_gc(self):
         if self.pattern == -1:
             return
-        if not self.window:
+        window = self.get_window()
+        if not window:
             return
-        gc = self.window.new_gc()
+        gc = window.new_gc()
         cm = gc.get_colormap()
         w, h = self.get_client_size()
         bbrush = cm.alloc_color('#ffffff')
@@ -2454,9 +2461,10 @@ class PatternView(Gtk.DrawingArea):
     def draw_cursor_xor(self):
         if self.pattern == -1:
             return
-        if not self.window:
+        window = self.get_window()
+        if not window:
             return
-        cr = self.window.cairo_create()
+        cr = window.cairo_create()
         cx, cy = self.pattern_to_pos(self.row, self.group, self.track,
                                      self.index, self.subindex)
         if (cx >= (PATLEFTMARGIN + 4)) and (cy >= self.top_margin):
@@ -2472,9 +2480,10 @@ class PatternView(Gtk.DrawingArea):
     def draw_playpos_xor(self):
         if self.pattern == -1:
             return
-        if not self.window:
+        window = self.get_window()
+        if not window:
             return
-        drawable = self.window
+        drawable = window
         if not hasattr(self, "xor_gc"):
             self.create_xor_gc()
         gc = self.xor_gc
@@ -2604,10 +2613,11 @@ class PatternView(Gtk.DrawingArea):
     def draw_pattern_background(self, ctx, layout):
         """ Draw the background, lines, borders and row numbers """
         w, h = self.get_client_size()
-        gc = self.window.new_gc()
+        window = self.get_window()
+        gc = window.new_gc()
         cm = gc.get_colormap()
         cfg = config.get_config()
-        drawable = self.window
+        drawable = window
         background = cm.alloc_color(cfg.get_color('PE BG'))
         pen = cm.alloc_color(cfg.get_color('PE Row Numbers'))
         gc.set_foreground(background)
@@ -2658,9 +2668,10 @@ class PatternView(Gtk.DrawingArea):
     def draw_bar_marks(self, ctx):
         "Draw the horizontal bars every each fourth and eighth bar."
         w, h = self.get_client_size()
-        gc = self.window.new_gc()
+        window = self.get_window()
+        gc = window.new_gc()
         cm = gc.get_colormap()
-        drawable = self.window
+        drawable = window
 
         def draw_bar(row, group, track, color):
             """Draw a horizontal bar for a specified row in a
@@ -2711,11 +2722,12 @@ class PatternView(Gtk.DrawingArea):
     def draw_parameter_values(self, ctx, layout):
         """ Draw the parameter values for all tracks, columns and rows."""
         w, h = self.get_client_size()
-        gc = self.window.new_gc()
+        window = self.get_window()
+        gc = window.new_gc()
         cm = gc.get_colormap()
         cfg = config.get_config()
         pen = cm.alloc_color(cfg.get_color('PE Text'))
-        drawable = self.window
+        drawable = window
 
         def draw_parameters_range(row, num_rows, group, track=0):
             """Draw the parameter values for a range of rows"""
@@ -2763,9 +2775,10 @@ class PatternView(Gtk.DrawingArea):
 
     def draw_selection(self, ctx):
         """ Draw selection box."""
-        # drawable = self.window
+        window = self.get_window()
+        # drawable = window
         # gc = drawable.new_gc()
-        cr = self.window.cairo_create()
+        cr = window.cairo_create()
 
         def draw_box(x, y, width, height):
             cr.rectangle(x + 0.5, y + 0.5, width, height)
@@ -2821,7 +2834,8 @@ class PatternView(Gtk.DrawingArea):
 
     def draw_background(self, ctx):
         w, h = self.get_client_size()
-        drawable = self.window
+        window = self.get_window()
+        drawable = window
         gc = drawable.new_gc()
         cm = gc.get_colormap()
         cfg = config.get_config()

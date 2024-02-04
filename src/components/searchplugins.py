@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, 
 # Boston, MA  02110-1301, USA.
 
+import functools
 from gi.repository import GObject, Gtk, Gdk, GdkPixbuf
 import neil.utils as utils, os, stat
 from neil.utils import new_stock_image_toggle_button, ObjectHandlerGroup
@@ -37,7 +38,7 @@ import zzub
 DRAG_FORMAT_PLUGIN_URI = 0
 
 DRAG_FORMATS = [
-	('application/x-neil-plugin-uri', 0, DRAG_FORMAT_PLUGIN_URI)
+	Gtk.TargetEntry('application/x-neil-plugin-uri', 0, DRAG_FORMAT_PLUGIN_URI)
 ]
 
 class SearchPluginsDialog(Gtk.Window):
@@ -69,7 +70,8 @@ class SearchPluginsDialog(Gtk.Window):
         self.searchbox = Gtk.Entry()
         self.treeview = Gtk.TreeView()
         new_liststore(self.treeview, [
-            ('Icon', GdkPixbuf),
+            # FIXME: error "TypeError: Item 0: Must be GObject.GType, not GdkPixbufProxyModule"
+            #('Icon', GdkPixbuf),
             ('Name', str, dict(markup=True)),
             (None, object),
             (None, str, dict(markup=True)),
@@ -77,8 +79,8 @@ class SearchPluginsDialog(Gtk.Window):
 
         # checkboxes
         self.check_containers = [Gtk.HBox() for i in range(2)]
-        self.vbox.pack_end(self.check_containers[1], False, False)
-        self.vbox.pack_end(self.check_containers[0], False, False)
+        self.vbox.pack_end(self.check_containers[1], expand=False, fill=False, padding=0)
+        self.vbox.pack_end(self.check_containers[0], expand=False, fill=False, padding=0)
 
         self.show_generators_button = Gtk.CheckButton(label="Generators")
         self.check_containers[0].add(self.show_generators_button)
@@ -100,15 +102,15 @@ class SearchPluginsDialog(Gtk.Window):
         self.treeview.set_headers_visible(False)
         self.treeview.set_rules_hint(True)
         self.populate()
-        self.vbox.pack_start(add_scrollbars(self.treeview))
-        self.vbox.pack_end(self.searchbox, False, False)
+        self.vbox.pack_start(add_scrollbars(self.treeview), expand=False, fill=False, padding=0)
+        self.vbox.pack_end(self.searchbox, expand=False, fill=False, padding=0)
         self.searchbox.connect("changed", self.on_entry_changed)
         self.filter = self.store.filter_new()
         self.filter.set_visible_func(self.filter_item, data=None)
         self.treeview.set_model(self.filter)
         self.treeview.set_tooltip_column(3)
-        self.treeview.drag_source_set(Gdk.BUTTON1_MASK | Gdk.BUTTON3_MASK,
-            DRAG_FORMATS, Gdk.ACTION_COPY | Gdk.ACTION_MOVE)
+        self.treeview.drag_source_set(Gdk.ModifierType.BUTTON1_MASK | Gdk.ModifierType.BUTTON3_MASK,
+            DRAG_FORMATS, Gdk.DragAction.COPY | Gdk.DragAction.MOVE)
         self.treeview.connect('drag_data_get', self.on_treeview_drag_data_get)
         cfg = com.get('neil.core.config')
         self.searchbox.set_text(cfg.pluginlistbrowser_search_term)
@@ -120,19 +122,19 @@ class SearchPluginsDialog(Gtk.Window):
 
     def get_icon_name(self, pluginloader):
         uri = pluginloader.get_uri()
-        if uri.startswith('@zzub.org/dssidapter/'):
+        if uri.startswith(b'@zzub.org/dssidapter/'):
             return 'dssi'
-        if uri.startswith('@zzub.org/ladspadapter/'):
+        if uri.startswith(b'@zzub.org/ladspadapter/'):
             return 'ladspa'
-        if uri.startswith('@psycle.sourceforge.net/'):
+        if uri.startswith(b'@psycle.sourceforge.net/'):
             return 'psycle'
         filename = pluginloader.get_name()
         filename = filename.strip().lower()
         for c in '():[]/,.!"\'$%&\\=?*#~+-<>`@ ':
-            filename = filename.replace(c, '_')
-        while '__' in filename:
-            filename = filename.replace('__','_')
-        filename = filename.strip('_')
+            filename = filename.replace(c.encode(), b'_')
+        while b'__' in filename:
+            filename = filename.replace(b'__',b'_')
+        filename = filename.strip(b'_')
         return filename
 
     def on_treeview_drag_data_get(self, widget, context, selection_data, info, time):
@@ -166,13 +168,14 @@ class SearchPluginsDialog(Gtk.Window):
     def filter_item(self, model, it, data):
         def is_native(pl):
             name = pl.get_loader_name().lower()
-            if "ladspa" in name or "dssi" in name:
+            if b"ladspa" in name or b"dssi" in name:
                 return False
             else:
                 return True
         if not self.searchterms:
             return True
-        child = model.get(it, 2)[0]
+        # child = model.get(it, 2)[0]
+        child = model.get(it, 1)[0]
         name = child.get_name().lower()
         if not self.show_nonnative_button.get_active() and not is_native(child):
             return False
@@ -198,18 +201,20 @@ class SearchPluginsDialog(Gtk.Window):
         cfg = com.get('neil.core.config')
         for pluginloader in player.get_pluginloader_list():
             plugins[pluginloader.get_uri()] = pluginloader
-        theme = Gtk.icon_theme_get_default()
+        theme = Gtk.IconTheme.get_default()
         def get_type_rating(n):
             uri = n.get_uri()
-            if uri.startswith('@zzub.org/dssidapter/'):
+            if uri.startswith(b'@zzub.org/dssidapter/'):
                 return 1
-            if uri.startswith('@zzub.org/ladspadapter/'):
+            if uri.startswith(b'@zzub.org/ladspadapter/'):
                 return 1
-            if uri.startswith('@psycle.sourceforge.net/'):
+            if uri.startswith(b'@psycle.sourceforge.net/'):
                 return 2
             return 0
         def get_icon_rating(n):
             icon = self.get_icon_name(n)
+            if isinstance(icon, bytes):
+                icon = icon.decode()
             if icon and theme.has_icon(icon):
                 return 0
             return 1
@@ -245,7 +250,7 @@ class SearchPluginsDialog(Gtk.Window):
                 return "Root"
             else:
                 return "Other"
-        for pl in sorted(list(plugins.values()), cmp_child):
+        for pl in sorted(list(plugins.values()), key=functools.cmp_to_key(cmp_child)):
             name = prepstr(pl.get_name())
             text = '<b>' + name + '</b>\n<small>' + get_type_text(pl) + '</small>'
             pixbuf = None
@@ -256,11 +261,14 @@ class SearchPluginsDialog(Gtk.Window):
             tpcount = pl.get_parameter_count(zzub.zzub_parameter_group_track)
             acount = pl.get_attribute_count()
             tooltip += '%i global parameters, %i track parameters, %i attributes\n\n' % (gpcount, tpcount, acount)
-            author = pl.get_author().replace('<', '&lt;').replace('>', '&gt;')
+            author = pl.get_author().replace(b'<', b'&lt;').replace(b'>', b'&gt;')
             tooltip += 'Written by ' + prepstr(author)
+            if isinstance(icon, bytes):
+                icon = icon.decode()
             if icon and theme.has_icon(icon):
                 pixbuf = theme.load_icon(icon, Gtk.IconSize.MENU, 0)
-            self.store.append([pixbuf, text, pl, tooltip])
+            # self.store.append([pixbuf, text, pl, tooltip])
+            self.store.append([text, pl, tooltip])
         
 
 __all__ = [

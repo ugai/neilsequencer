@@ -63,7 +63,7 @@ class SimpleEnvelope(Gtk.DrawingArea):
         self.context_menu.append(self.reset)
 
     def expose(self, widget, event):
-        self.context = widget.window.cairo_create()
+        self.context = widget.get_window().cairo_create()
         self.draw(self.context)
         return False
 
@@ -72,9 +72,10 @@ class SimpleEnvelope(Gtk.DrawingArea):
         return rect.width, rect.height
 
     def redraw(self):
-        if self.get_window() is not None:
+        window = self.get_window()
+        if window is not None:
             w, h = self.get_client_size()
-            self.window.invalidate_rect((0, 0, w, h), False)
+            window.invalidate_rect(Gdk.Rectangle(0, 0, w, h), False)
 
     def on_enter(self, widget, event):
         """
@@ -155,7 +156,8 @@ class SimpleEnvelope(Gtk.DrawingArea):
         """
         Callback that responds to mouse motion over the envelope view.
         """
-        mx, my, state = self.window.get_pointer()
+        window = self.get_window()
+        mx, my, state = window.get_pointer()
         mx, my = int(mx), int(my)
         if self.dragging:
             x, y = self.pixel_to_env((mx, my))
@@ -359,7 +361,7 @@ class EnvelopeView(Gtk.DrawingArea):
         self.save_dialog.add_filter(self.filter_)
         
     def expose(self, widget, event):
-        self.context = widget.window.cairo_create()
+        self.context = widget.get_window().cairo_create()
         self.draw(self.context)
         return False
 
@@ -368,9 +370,10 @@ class EnvelopeView(Gtk.DrawingArea):
         return rect.width, rect.height
 
     def redraw(self):
-        if self.get_window() is not None:
+        window = self.get_window()
+        if window is not None:
             w, h = self.get_client_size()
-            self.window.invalidate_rect((0, 0, w, h), False)
+            window.invalidate_rect(Gdk.Rectangle(0, 0, w, h), False)
 
     def on_enter(self, widget, event):
         """
@@ -456,7 +459,8 @@ class EnvelopeView(Gtk.DrawingArea):
         """
         Callback that responds to mouse motion over the envelope view.
         """
-        mx, my, state = self.window.get_pointer()
+        window = self.get_window()
+        mx, my, state = window.get_pointer()
         mx, my = int(mx), int(my)
         if self.dragging:
             x, y, f = self.envelope.get_point(self.currentpoint)

@@ -78,8 +78,9 @@ class AmpView(Gtk.DrawingArea):
         self.peaks[:self.hold] = [self.amp - std] * self.hold
 
         rect = self.get_allocation()
-        if self.get_window() is not None:
-            self.window.invalidate_rect((0, 0, rect.width, rect.height), False)
+        window = self.get_window()
+        if window is not None:
+            window.invalidate_rect(Gdk.Rectangle(0, 0, rect.width, rect.height), False)
         return True
 
     def draw(self, ctx):
@@ -161,7 +162,7 @@ class AmpView(Gtk.DrawingArea):
         self.linear.add_color_stop_rgb(1, 0, .3, 0)
 
     def expose(self, widget, event):
-        context = widget.window.cairo_create()
+        context = widget.get_window().cairo_create()
         self.draw(context)
         return False
 
@@ -225,7 +226,9 @@ class MasterPanel(Gtk.VBox):
         self.connect('realize', self.on_realize)
 
     def on_realize(self, widget):
-        self.clipbtn_org_color = self.clipbtn.get_style().bg[Gtk.StateType.NORMAL]
+        bg = self.clipbtn.get_style().bg
+        if bg:
+            self.clipbtn_org_color = bg[Gtk.StateType.NORMAL]
 
     def on_zzub_parameter_changed(self, plugin, group, track, param, value):
         player = com.get('neil.core.player')

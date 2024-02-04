@@ -679,7 +679,7 @@ def new_liststore(view, columns):
                 column.set_resizable(True)
             if options.get('icon',False):
                 cellrenderer = Gtk.CellRendererPixbuf()
-                column.pack_start(cellrenderer)
+                column.pack_start(cellrenderer, expand=False)
                 column.add_attribute(cellrenderer, 'icon-name', i)
             else:
                 cellrenderer = Gtk.CellRendererText()
@@ -695,11 +695,11 @@ def new_liststore(view, columns):
             th.column = i
             cellrenderer = Gtk.CellRendererToggle()
             cellrenderer.connect('toggled', th.fixed_toggled, liststore)
-            column.pack_start(cellrenderer)
+            column.pack_start(cellrenderer, expand=False)
             column.add_attribute(cellrenderer, 'active', i)
         elif coltype == GdkPixbuf:
             cellrenderer = Gtk.CellRendererPixbuf()
-            column.pack_start(cellrenderer)
+            column.pack_start(cellrenderer, expand=False)
             column.add_attribute(cellrenderer, 'pixbuf', i)
         if isinstance(view, Gtk.TreeView):
             view.append_column(column)
@@ -759,7 +759,7 @@ def new_image_toggle_button(path, tooltip=None, width=20, height=20):
     return button
 
 def new_theme_image(name,size):
-    theme = Gtk.icon_theme_get_default()
+    theme = Gtk.IconTheme.get_default()
     image = Gtk.Image()
     if theme.has_icon(name):
         pixbuf = theme.load_icon(name, size, 0)
@@ -946,7 +946,7 @@ def make_submenu_item(submenu, name):
     return item
 
 def make_stock_menu_item(stockid, func, frame=None, shortcut=None, *args):
-    item = Gtk.ImageMenuItem(stockid)
+    item = Gtk.ImageMenuItem.new_from_stock(stockid)
     if frame and shortcut:
         acc = com.get('neil.core.accelerators')
         acc.add_accelerator(shortcut, item)
@@ -1102,7 +1102,7 @@ class Menu(Gtk.Menu):
         return item
 
     def add_image_item(self, label, icon_or_path, func, *args):
-        item = Gtk.ImageMenuItem(stock_id=label)
+        item = Gtk.ImageMenuItem.new_from_stock(stock_id=label)
         if isinstance(icon_or_path, str):
             image = Gtk.Image()
             image.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file(icon_or_path))
@@ -1203,7 +1203,7 @@ def generate_ui_methods(class_, memberlist):
 
 def refresh_gui():
     while Gtk.events_pending():
-        Gtk.main_iteration_do(block=False)
+        Gtk.main_iteration_do(blocking=False)
 
 def synchronize_list(old_list, new_list, insert_entry_func=None, del_entry_func=None, swap_entry_func=None):
     """

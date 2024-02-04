@@ -143,7 +143,7 @@ class WaveEditView(Gtk.DrawingArea):
         self.loop_end = 150
 
     def expose(self, widget, event):
-        self.context = widget.window.cairo_create()
+        self.context = widget.get_window().cairo_create()
         self.draw(self.context)
         return False
 
@@ -161,9 +161,10 @@ class WaveEditView(Gtk.DrawingArea):
             self.sample_changed()
 
     def redraw(self):
-        if self.get_window() is not None:
+        window = self.get_window()
+        if window is not None:
             w, h = self.get_client_size()
-            self.window.invalidate_rect((0, 0, w, h), False)
+            window.invalidate_rect(Gdk.Rectangle(0, 0, w, h), False)
 
     def update_digest(self, channel=0):
         if self.level == None:
@@ -341,7 +342,7 @@ class WaveEditView(Gtk.DrawingArea):
         if (event.button == 1):
             s, a = self.client_to_sample(mx,my)
             # If a user double-clicks - clear the selection.
-            if (event.type == Gdk._2BUTTON_PRESS):
+            if (event.type == Gdk.EventType._2BUTTON_PRESS):
                 self.selection = None
                 self.dragging = False
                 self.redraw()
@@ -469,17 +470,18 @@ class WaveEditView(Gtk.DrawingArea):
         """
         mx, my = int(event.x), int(event.y)
         s, a = self.client_to_sample(mx, my)
+        window = self.get_window()
         # If mouse cursor is near one of vertical markers, change the pointer.
         if (self.near_start_selection_marker(mx, my) or
             self.near_end_selection_marker(mx, my) or
             self.near_start_loop_marker(mx, my) or
             self.near_end_loop_marker(mx, my)):
             resizer = Gdk.Cursor(Gdk.SB_H_DOUBLE_ARROW)
-            self.window.set_cursor(resizer)
+            window.set_cursor(resizer)
         else:
             if (not self.dragging) and (not self.start_loop_dragging) and (not self.end_loop_dragging):
                 arrow = Gdk.Cursor(Gdk.ARROW)
-                self.window.set_cursor(arrow)
+                window.set_cursor(arrow)
         if self.dragging == True:
             if s < self.startpos:
                 self.set_selection(s, self.startpos)

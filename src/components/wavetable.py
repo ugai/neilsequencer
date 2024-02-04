@@ -778,7 +778,7 @@ class WavetablePanel(Gtk.VBox):
         @type event: wx.MouseEvent
         """
         #  Plays the selected file
-        if (event.button == 1) and (event.type == Gdk._2BUTTON_PRESS):
+        if (event.button == 1) and (event.type == Gdk.EventType._2BUTTON_PRESS):
             # double click
             self.on_play_wave(event)
             #I think this makes much more sense..
@@ -989,10 +989,10 @@ class WavetablePanel(Gtk.VBox):
             #if env.is_enabled():
             #    self.envscrollwin.show_all()
             #else:
-            #    self.envscrollwin.hide_all()
+            #    self.envscrollwin.hide()
         #else:
         #    self.envelope.set_sensitive(False)
-        #    self.envscrollwin.hide_all()
+        #    self.envscrollwin.hide()
 
     def on_samplelist_select(self, selection):
         """

@@ -24,6 +24,7 @@ from gi.repository import GObject
 import neil.com as com
 import neil.common as common
 import os
+import functools
 import sys
 import time
 import zzub
@@ -375,7 +376,7 @@ class NeilPlayer(Player, PropertyEventHandler):
         self.clear()
         self.__loading = True
         self.set_callback_state(False)
-        res = zzub.Player.load_ccm(self, filename)
+        res = zzub.Player.load_ccm(self, filename.encode())
         self.set_callback_state(True)
         self.__loading = False
         if not res:
@@ -490,7 +491,7 @@ class NeilPlayer(Player, PropertyEventHandler):
             aname = a[0].get_pattern_name(a[1])
             bname = b[0].get_pattern_name(b[1])
             return cmp(aname.lower(), bname.lower())
-        patterns = sorted([(plugin, i) for i in range(plugin.get_pattern_count())], cmp_func)
+        patterns = sorted([(plugin, i) for i in range(plugin.get_pattern_count())], key=functools.cmp_to_key(cmp_func))
         if not patterns:
             return
         if direction == -1:
@@ -513,7 +514,7 @@ class NeilPlayer(Player, PropertyEventHandler):
         """
         def cmp_func(a, b):
             return cmp(a.get_name().lower(), b.get_name().lower())
-        plugins = sorted(list(self.get_plugin_list()), cmp_func)
+        plugins = sorted(list(self.get_plugin_list()), key=functools.cmp_to_key(cmp_func))
         if not plugins:
             return
         if direction == -1:

@@ -24,7 +24,8 @@ A view that allows browsing available extension interfaces and documentation.
 This module can also be executed standalone.
 """
 
-from neil.utils import Menu, test_view
+import functools
+from neil.utils import Menu, test_view, cmp
 from gi.repository import GObject, Gtk, Pango
 import inspect
 import neil.com as com
@@ -76,7 +77,7 @@ class PackageBrowserDialog(Gtk.Dialog):
         packagenode = self.ifacestore.append(rootnode, ["<b>By Packages</b>", None])
         pkgnodes = {}
         pkgnodes['(unknown)'] = self.ifacestore.append(packagenode, ["<i>(unknown)</i>", None])
-        for pkg in sorted(com.get_packages(), lambda a, b: cmp(a.name.lower(), b.name.lower())):
+        for pkg in sorted(com.get_packages(), key=functools.cmp_to_key(lambda a, b: cmp(a.name.lower(), b.name.lower()))):
             pkgnodes[pkg.module] = self.ifacestore.append(packagenode, ["<b>%s</b> (<b>module</b> <i>%s</i>)" % (pkg.name, pkg.module), None])
         categorynode = self.ifacestore.append(rootnode, ["<b>By Categories</b>", None])
         catnodes = {}

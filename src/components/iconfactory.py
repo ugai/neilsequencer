@@ -89,7 +89,7 @@ class IconLibrary:
                             bestw = d
                             pixbuf = icon
                 #print "new icon: %s (%r = %i,%i ~ %i,%i)" % (key,size,w,h,pixbuf.get_width(),pixbuf.get_height())
-                Gtk.icon_theme_add_builtin_icon(key, size, pixbuf)
+                Gtk.IconTheme.add_builtin_icon(key, size, pixbuf)
                     
     def register_single(self, stockid, label, key=''):
         if key:

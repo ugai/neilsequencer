@@ -43,6 +43,7 @@ Provides a class to read and write preset files.
 #~ 4 byte: size of comment string
 #~ comment characters
 
+import functools
 import zzub
 from .utils import read_int, read_string, write_int, write_string
 
@@ -189,7 +190,7 @@ class PresetCollection:
         """
         Sorts presets by filenames.
         """
-        self.presets = sorted(self.presets, sort_preset)
+        self.presets = sorted(self.presets, key=functools.cmp_to_key(sort_preset))
 
 __all__ = [
     'PresetCollection',

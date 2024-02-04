@@ -153,17 +153,17 @@ class KnobTooltip:
         wx,wy = x+rc.x-w, y+rc.y+rc.height/2-h/2
         self.tooltip_window.move(wx,wy)
         rc = self.tooltip_window.get_allocation()
-        self.tooltip_window.window.invalidate_rect((0,0,rc.width,rc.height), False)
+        self.tooltip_window.window.invalidate_rect(Gdk.Rectangle(0,0,rc.width,rc.height), False)
         self.tooltip.set_text(text)
         if self.tooltip_timeout:
             GObject.source_remove(self.tooltip_timeout)
         self.tooltip_timeout = GObject.timeout_add(500, self.hide_tooltip)
             
     def hide_tooltip(self):
-        self.tooltip_window.hide_all()
+        self.tooltip_window.hide()
         
     def on_tooltip_expose(self, widget, event):
-        ctx = widget.window.cairo_create()
+        ctx = widget.get_window().cairo_create()
         rc = widget.get_allocation()
         ctx.set_source_rgb(*hls_to_rgb(0.0, 0.5, 1.0))
         ctx.paint()
@@ -326,7 +326,8 @@ class Knob(Gtk.VBox):
 
     def on_motion(self, widget, event):
         if self.dragging:
-            x,y,state = self.window.get_pointer()
+            window = self.get_window()
+            x,y,state = window.get_pointer()
             rc = self.get_allocation()
             range = self.max_value - self.min_value
             scale = rc.height
@@ -345,7 +346,7 @@ class Knob(Gtk.VBox):
             return
         range = self.max_value - self.min_value
         minstep = 1.0 / (10**self.digits)
-        if event.state & (Gdk.SHIFT_MASK | Gdk.BUTTON1_MASK):
+        if event.state & (Gdk.SHIFT_MASK | Gdk.ModifierType.BUTTON1_MASK):
             step = minstep
         else:
             step = max(self.quantize_value(range/25.0), minstep)
@@ -539,12 +540,14 @@ class Knob(Gtk.VBox):
         
     def refresh(self):
         rect = self.get_allocation()
-        if self.get_window() is not None:
-            self.window.invalidate_rect(rect, False)
+        window = self.get_window()
+        if window is not None:
+            window.invalidate_rect(rect, False)
         return True
         
     def on_expose(self, widget, event):
-        self.context = self.window.cairo_create()
+        window = self.get_window()
+        self.context = window.cairo_create()
         self.draw(self.context)
         return False
         
@@ -637,8 +640,9 @@ class DecoBox(Gtk.VBox):
         
     def refresh(self):
         rc = self.get_allocation()
-        if self.get_window() is not None:
-            self.window.invalidate_rect(rc, False)
+        window = self.get_window()
+        if window is not None:
+            window.invalidate_rect(rc, False)
         return True
         
     def configure_font(self, ctx):
@@ -695,7 +699,7 @@ class DecoBox(Gtk.VBox):
         ctx.paint_with_alpha(self.alpha)
 
     def on_expose(self, widget, event):
-        self.context = widget.window.cairo_create()
+        self.context = widget.get_window().cairo_create()
         self.draw(self.context)
         return False
 
@@ -740,9 +744,10 @@ class LCD(Gtk.DrawingArea):
         # make tiles
         self.chars = []
         BITMASK = lcdfont.BITMASK
+        window = self.get_window()
         for i in range(256):
             x,y,w,h = 0, 0, self.charwidth, self.charheight
-            pm = Gdk.Pixmap(self.window, w, h, -1)
+            pm = Gdk.Pixmap(window, w, h, -1)
             self.chars.append(pm)
             ctx = pm.cairo_create()
             ctx.set_source_rgb(*hls_to_rgb(*self.bg_hls))
@@ -798,7 +803,7 @@ class LCD(Gtk.DrawingArea):
         self.refresh()
         
     def on_expose(self, widget, event):
-        self.context = widget.window.cairo_create()
+        self.context = widget.get_window().cairo_create()
         self.draw(self.context)
         return False
         
@@ -825,7 +830,8 @@ class LCD(Gtk.DrawingArea):
         self.refresh()
 
     def draw(self, ctx):
-        gc = self.window.new_gc()
+        window = self.get_window()
+        gc = window.new_gc()
         chars = self.get_characters()
         rc = self.get_allocation()
         x,y,w,h = 0, 0, rc.width, rc.height
@@ -837,14 +843,15 @@ class LCD(Gtk.DrawingArea):
         for row in self.buffer:
             rx = x
             for c in row:
-                self.window.draw_drawable(gc, chars[ord(c)], 0, 0, int(rx), int(ry), -1, -1)
+                window.draw_drawable(gc, chars[ord(c)], 0, 0, int(rx), int(ry), -1, -1)
                 rx += self.charwidth+1
             ry += self.charheight+1
 
     def refresh(self):
         rc = self.get_allocation()
-        if self.get_window() is not None:
-            self.window.invalidate_rect((0,0,rc.width,rc.height), False)
+        window = self.get_window()
+        if window is not None:
+            window.invalidate_rect(Gdk.Rectangle(0,0,rc.width,rc.height), False)
         return True
 
 if __name__ == '__main__':

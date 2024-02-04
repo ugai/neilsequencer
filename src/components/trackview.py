@@ -106,9 +106,10 @@ class View(Gtk.DrawingArea):
         self.redraw()
 
     def redraw(self):
-        if self.get_window() is not None:
+        window = self.get_window()
+        if window is not None:
             rect = self.get_allocation()
-            self.window.invalidate_rect((0,0,rect.width,rect.height), False)
+            window.invalidate_rect(Gdk.Rectangle(0,0,rect.width,rect.height), False)
 
     def get_client_size(self):
         rect = self.get_allocation()
@@ -131,9 +132,10 @@ class TimelineView(View):
     def expose(self, widget, *args):
         player = com.get('neil.core.player')
         w,h = self.get_client_size()
-        gc = self.window.new_gc()
+        window = self.get_window()
+        gc = window.new_gc()
         cm = gc.get_colormap()
-        drawable = self.window
+        drawable = window
         cfg = config.get_config()
         bgbrush = cm.alloc_color(cfg.get_color('SE BG'))
         pen1 = cm.alloc_color(cfg.get_color('SE BG Very Dark'))
@@ -197,6 +199,7 @@ class TrackView(View):
     def get_pattern_pixmap(self, gc, layout, pos, value):
         bb = None #self.patterngfx.get(value, None)
         w,h = self.get_client_size()
+        window = self.get_window()
         if not bb:
             tpp = self.get_ticks_per_pixel()
         
@@ -226,7 +229,7 @@ class TrackView(View):
             ps2 = int(((end-offset) / tpp) + 0.5)
             psize = max(ps2-ps1,2) # max(int(((SEQROWSIZE * length) / self.step) + 0.5),2)
             bbh = h-2
-            bb = Gdk.Pixmap(self.window, psize-1, bbh-1, -1)
+            bb = Gdk.Pixmap(window, psize-1, bbh-1, -1)
             self.patterngfx[value] = bb                    
             if value < 0x10:
                 gc.set_foreground(sbrushes[value])
@@ -262,9 +265,10 @@ class TrackView(View):
     def expose(self, widget, *args):
         player = com.get('neil.core.player')
         w,h = self.get_client_size()
-        gc = self.window.new_gc()
+        window = self.get_window()
+        gc = window.new_gc()
         cm = gc.get_colormap()
-        drawable = self.window
+        drawable = window
         cfg = config.get_config()
         bghsb = to_hsb(*cfg.get_float_color('SE BG'))
         bgb = max(bghsb[2],0.1)
@@ -320,7 +324,7 @@ class TrackView(View):
             bbw,bbh = bb.get_size()
             x = int((pos - start)/tpp + 0.5)
             if ((x+bbw) >= 0) and (x < w):
-                self.window.draw_drawable(gc, bb, 0, 0, x, 1, bbw, bbh)
+                window.draw_drawable(gc, bb, 0, 0, x, 1, bbw, bbh)
 
 #                if intrack and (pos >= selstart[1]) and (pos <= selend[1]):
 #                    gc.set_foreground(invbrush)

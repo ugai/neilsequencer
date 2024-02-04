@@ -24,7 +24,7 @@ Provides an object which eases access to the applications configuration.
 """
 
 from gi.repository import Gtk
-import os, glob, re
+import os, glob, re, functools
 
 from neil.utils import filepath, camelcase_to_unixstyle, etcpath, imagepath, iconpath, sharedpath, filenameify, cmp
 import neil.preset as preset
@@ -285,7 +285,7 @@ class NeilConfig(configparser.ConfigParser):
         assert self._section
         if not self.has_section(self._section):
             return []
-        return sorted(self.items(self._section), lambda a,b: cmp(a[0],b[0]))
+        return sorted(self.items(self._section), key=functools.cmp_to_key(lambda a,b: cmp(a[0],b[0])))
 
     def read_int_value(self, name, default=0):
         assert self._section

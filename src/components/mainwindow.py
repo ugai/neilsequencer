@@ -130,14 +130,14 @@ class ViewMenu(Menu):
         if menuitem.get_active():
             view.show_all()
         else:
-            view.hide_all()
+            view.hide()
 
     def on_activate_item(self, menuitem, view):
         if 'neil.viewpanel' in view.__neil__.get('categories',[]):
             framepanel = com.get('neil.core.framepanel')
             framepanel.select_viewpanel(view)
         else:
-            view.hide_all()
+            view.hide()
 
     def on_activate(self, widget, item, view):
         item.set_active(view.get_property('visible'))
@@ -346,12 +346,12 @@ class NeilFrame(Gtk.Window):
         vbox.pack_start(self.transport, expand=False, fill=False, padding=0)
 
         self.update_title()
-        Gtk.window_set_default_icon_list(
+        Gtk.Window.set_default_icon_list([
                         GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("48x48/apps/neil.png")),
                         GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("32x32/apps/neil.png")),
                         GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("24x24/apps/neil.png")),
                         GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("22x22/apps/neil.png")),
-                        GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("16x16/apps/neil.png")))
+                        GdkPixbuf.Pixbuf.new_from_file(hicoloriconpath("16x16/apps/neil.png"))])
         self.resize(750, 550)
 
         self.connect('key-press-event', self.on_key_down)
@@ -364,7 +364,7 @@ class NeilFrame(Gtk.Window):
         self.activated=0
 
         self.show_all()
-        self.master.hide_all()
+        self.master.hide()
         self.load_view()
 
         eventbus = com.get('neil.core.eventbus')
@@ -678,7 +678,7 @@ class NeilFrame(Gtk.Window):
             progBar.set_size_request(300, 40)
             progBar.set_fraction(0)
             progBar.show()
-            dlg.vbox.pack_start(progBar)
+            dlg.vbox.pack_start(progBar, expand=False, fill=False, padding=0)
             dlg.show()
             done = False
             def progress_callback():
@@ -936,7 +936,7 @@ class NeilFrame(Gtk.Window):
         self.save_view()
         try:
             self.save_changes()
-            self.hide_all()
+            self.hide()
             return False
         except CancelException:
             return True

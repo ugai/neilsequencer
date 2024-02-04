@@ -29,6 +29,7 @@ from neil.utils import prepstr, filepath, db2linear, linear2db, is_debug, filena
 import zzub
 import sys,os
 import fnmatch
+import functools
 import ctypes
 import time
 import queue
@@ -177,8 +178,8 @@ class ParameterView(Gtk.VBox):
             namelabel = Gtk.Label()
             namelabel._default_name = name
             button = Gtk.Button('Drag to connect')
-            button.drag_source_set(Gdk.BUTTON1_MASK | Gdk.BUTTON3_MASK,
-                self.DROP_TARGETS, Gdk.ACTION_COPY)
+            button.drag_source_set(Gdk.ModifierType.BUTTON1_MASK | Gdk.ModifierType.BUTTON3_MASK,
+                self.DROP_TARGETS, Gdk.DragAction.COPY)
             button.connect('drag-data-get', self.on_drag_data_get, (g, t, i))
             button.connect('drag-data-delete', self.on_drag_data_delete, 
                             (g, t, i))
@@ -211,7 +212,7 @@ class ParameterView(Gtk.VBox):
             namelabel._default_name = name
             button = Gtk.Button('Drop here to connect')
             button.drag_dest_set(Gtk.DEST_DEFAULT_ALL, self.DROP_TARGETS,
-                Gdk.ACTION_COPY)
+                Gdk.DragAction.COPY)
             button.connect('drag-data-received', self.on_drag_data_received, (g,t,i))
             button.connect('drag-drop', self.on_drag_drop, (g,t,i))
             snamegroup.add_widget(namelabel)
@@ -261,7 +262,7 @@ class ParameterView(Gtk.VBox):
             slider.set_tooltip_markup("<b>Description</b>: %s" % p.get_description())
             slider.set_value(v)
             slider.drag_dest_set(Gtk.DEST_DEFAULT_ALL, self.DROP_TARGETS,
-                Gdk.ACTION_COPY)
+                Gdk.DragAction.COPY)
             slider.connect('drag-data-received', self.on_drag_data_received, (g, t, i))
             slider.connect('drag-drop', self.on_drag_drop, (g, t, i))
             valuelabel = Gtk.Label("")
@@ -527,7 +528,7 @@ class ParameterView(Gtk.VBox):
             else:
                 index = 0
                 submenu = Gtk.Menu()
-                for name,channel,ctrlid in sorted(config.get_config().get_midi_controllers(), cmp_nocase):
+                for name,channel,ctrlid in sorted(config.get_config().get_midi_controllers(), key=functools.cmp_to_key(cmp_nocase)):
                     submenu.append(make_menu_item(prepstr(name), "", self.on_bind_controller, (g,t,i), (name,channel,ctrlid)))
                     index += 1
                 controllers = 0
@@ -751,7 +752,8 @@ class ParameterView(Gtk.VBox):
             minv = p.get_value_min()
             maxv = p.get_value_max()
             data_entry = DataEntry((minv,maxv,chr(kv)), self)
-            x,y,state = self.window.get_toplevel().get_pointer()
+            window = self.get_window()
+            x,y,state = window.get_toplevel().get_pointer()
             px,py = self.get_toplevel().get_position()
             data_entry.move(px+x, py+y)
             if data_entry.run() == Gtk.ResponseType.OK:
@@ -788,7 +790,7 @@ class ParameterView(Gtk.VBox):
         Used to reset value to default on double click
         """        
         (g,t,i) = xxx_todo_changeme12
-        if event.type == Gdk._2BUTTON_PRESS:
+        if event.type == Gdk.EventType._2BUTTON_PRESS:
             p = self.plugin.get_parameter(g,t,i)
             v = p.get_value_default()
             self.plugin.set_parameter_value(g,t,i,v,1)

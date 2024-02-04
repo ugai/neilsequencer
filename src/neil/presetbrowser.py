@@ -53,7 +53,7 @@ class PresetView(Gtk.VBox):
         scrollwindow = Gtk.ScrolledWindow()
         scrollwindow.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.presetlist, self.presetstore, columns = new_listview([('Name', str),])
-        self.presetlist.get_selection().set_mode(Gtk.SELECTION_MULTIPLE)
+        self.presetlist.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         self.update_presets()
         scrollwindow.add_with_viewport(self.presetlist)
         self.scrollwindow = scrollwindow        
